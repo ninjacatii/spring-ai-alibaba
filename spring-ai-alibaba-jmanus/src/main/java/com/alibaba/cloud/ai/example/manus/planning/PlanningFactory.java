@@ -40,6 +40,8 @@ import com.alibaba.cloud.ai.example.manus.tool.code.CodeUtils;
 import com.alibaba.cloud.ai.example.manus.tool.code.PythonExecute;
 import com.alibaba.cloud.ai.example.manus.tool.searchAPI.GoogleSearch;
 import com.alibaba.cloud.ai.example.manus.tool.textOperator.TextFileOperator;
+import com.alibaba.cloud.ai.example.manus.tool.textOperator.TextFileSaveTool;
+import com.alibaba.cloud.ai.example.manus.tool.textOperator.TextFileOpenTool;
 import com.alibaba.cloud.ai.example.manus.tool.textOperator.TextFileService;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -171,6 +173,8 @@ public class PlanningFactory {
 		toolDefinitions.add(new Bash(CodeUtils.WORKING_DIR));
 		toolDefinitions.add(new DocLoaderTool());
 		toolDefinitions.add(new TextFileOperator(CodeUtils.WORKING_DIR, textFileService));
+		toolDefinitions.add(new TextFileSaveTool(CodeUtils.WORKING_DIR, textFileService));
+		toolDefinitions.add(new TextFileOpenTool(CodeUtils.WORKING_DIR, textFileService));
 		toolDefinitions.add(new GoogleSearch());
 		toolDefinitions.add(new PythonExecute());
 		List<McpServiceEntity> functionCallbacks = mcpService.getFunctionCallbacks();
