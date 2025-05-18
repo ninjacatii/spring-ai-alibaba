@@ -40,6 +40,7 @@ public class ConfigController {
 		return ResponseEntity.ok(configService.getConfigsByGroup(groupName));
 	}
 
+	//START:save config
 	@PostMapping("/batch-update")
 	public ResponseEntity<Void> batchUpdateConfigs(@RequestBody List<ConfigEntity> configs) {
 		configService.batchUpdateConfigs(configs);

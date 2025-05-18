@@ -284,7 +284,7 @@ class AdminUI {
         
         // 添加事件处理
         inputElem.addEventListener('change', (e) => {
-            const value = config.inputType === 'BOOLEAN' 
+            const value = (config.inputType === 'BOOLEAN' || config.inputType === 'CHECKBOX')
                 ? e.target.checked.toString() 
                 : e.target.value;
             
