@@ -229,7 +229,7 @@ public class TextFileOperator implements ToolCallBiFunctionDef {
 			Files.writeString(absolutePath, newContent);
 
 			textFileService.updateFileState(planId, currentFilePath, "Success: Text replaced");
-			return new ToolExecuteResult("Text replaced successfully");
+			return new ToolExecuteResult("Text replaced successfully: " + absolutePath);
 		}
 		catch (IOException e) {
 			textFileService.updateFileState(planId, textFileService.getCurrentFilePath(planId),
@@ -306,7 +306,7 @@ public class TextFileOperator implements ToolCallBiFunctionDef {
 			Files.writeString(absolutePath, "\n" + content, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
 
 			textFileService.updateFileState(planId, currentFilePath, "Success: Content appended");
-			return new ToolExecuteResult("Content appended successfully");
+			return new ToolExecuteResult("Content appended successfully: " + absolutePath);
 		}
 		catch (IOException e) {
 			textFileService.updateFileState(planId, textFileService.getCurrentFilePath(planId),
