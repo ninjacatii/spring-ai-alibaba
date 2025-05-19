@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -95,6 +96,11 @@ public class PlanFinalizer {
 				.prompt(prompt)
 				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", plan.getPlanId())
 					.param("chat_memory_retrieve_size", 100))
+					.advisors(new SimpleLoggerAdvisor(
+							request -> "Custom request: " + request.userText(),
+							response1 -> "Custom response: " + response1.getResult(),
+							0
+					))
 				.call()
 				.chatResponse();
 

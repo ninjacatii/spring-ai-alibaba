@@ -51,26 +51,53 @@ public class TextFileOperator implements ToolCallBiFunctionDef {
 			    "properties": {
 			        "action": {
 			            "type": "string",
+			            "enum": [
+			                "open",
+			                "replace",
+			                "get_text",
+			                "save",
+			                "append",
+			                "count_words"
+			            ],
 			            "description": "(required) The action to perform: 'open', 'replace', 'get_text', 'save', 'append', 'count_words'"
 			        },
 			        "file_path": {
 			            "type": "string",
-			            "description": "(required) The path where the text file is located or should be saved"
+			            "description": "The path where the text file is located or should be saved"
 			        },
 			        "content": {
 			            "type": "string",
-			            "description": "(optional) The content to write or append to the file"
+			            "description": "The content to write or append to the file"
 			        },
 			        "source_text": {
 			            "type": "string",
-			            "description": "(optional) The text to be replaced when using 'replace' action"
+			            "description": "The text to be replaced when using 'replace' action"
 			        },
 			        "target_text": {
 			            "type": "string",
-			            "description": "(optional) The text to replace with when using 'replace' action"
+			            "description": "The text to replace with when using 'replace' action"
 			        }
 			    },
-			    "required": ["action", "file_path"]
+			    "required": ["action"],
+				"dependencies": {
+					"open": [
+						"file_path"
+					],
+					"replace": [
+						"source_text",
+						"target_text"
+					],
+					"get_text": [
+					],
+					"save": [
+						"content"
+					],
+					"append": [
+						"content"
+					],
+					"count_words": [
+					]
+				}
 			}
 			""";
 

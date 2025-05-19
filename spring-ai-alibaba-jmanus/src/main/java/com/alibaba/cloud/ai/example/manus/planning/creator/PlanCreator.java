@@ -25,6 +25,7 @@ import com.alibaba.cloud.ai.example.manus.tool.PlanningTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
@@ -80,6 +81,11 @@ public class PlanCreator {
 				.toolCallbacks(List.of(planningTool.getFunctionToolCallback()))
 				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", planId)
 					.param("chat_memory_retrieve_size", 100))
+					.advisors(new SimpleLoggerAdvisor(
+							request -> "Custom request: " + request.userText(),
+							response1 -> "Custom response: " + response1.getResult(),
+							0
+					))
 				.call();
 			String outputText = response.chatResponse().getResult().getOutput().getText();
 			// 检查计划是否创建成功
