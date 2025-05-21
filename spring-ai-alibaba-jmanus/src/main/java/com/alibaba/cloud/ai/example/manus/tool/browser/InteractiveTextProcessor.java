@@ -33,7 +33,7 @@ public class InteractiveTextProcessor {
 	/**
 	 * 用于存储交互式元素的缓存列表
 	 */
-	private List<WebElementWrapper> interactiveElementsCache;
+	private Map<Integer, WebElementWrapper> interactiveElementsCache;
 
 	/**
 	 * 用于选择交互式元素的CSS选择器
@@ -43,14 +43,14 @@ public class InteractiveTextProcessor {
 
 	public void refreshCache(WebDriver driver) {
 		// 清空现有缓存
-		this.interactiveElementsCache = new ArrayList<>();
+		this.interactiveElementsCache = new HashMap<>();
 
 		// 等待页面完全加载
 		waitForPageLoad(driver);
 
 		// 先获取主文档中的元素
-		List<WebElementWrapper> mainDocElements = getInteractiveElementsInner(driver);
-		this.interactiveElementsCache.addAll(mainDocElements);
+		HashMap<Integer, WebElementWrapper> mainDocElements = getInteractiveElementsInner(driver);
+		this.interactiveElementsCache.putAll(mainDocElements);
 
 		// 获取并处理所有iframe中的元素
 		processIframes(driver, "", null);
@@ -150,12 +150,12 @@ public class InteractiveTextProcessor {
 				driver.switchTo().frame(iframe);
 
 				// 获取iframe中的交互元素并添加到缓存
-				List<WebElementWrapper> iframeElements = getInteractiveElementsInner(driver);
-				for (WebElementWrapper wrapper : iframeElements) {
+				HashMap<Integer, WebElementWrapper> iframeElements = getInteractiveElementsInner(driver);
+				for (Map.Entry<Integer, WebElementWrapper> wrapper : iframeElements.entrySet()) {
 					// 设置iframe信息
-					wrapper.setIframeElement(iframe);
-					wrapper.setIframePath(currentPath);
-					this.interactiveElementsCache.add(wrapper);
+					wrapper.getValue().setIframeElement(iframe);
+					wrapper.getValue().setIframePath(currentPath);
+					this.interactiveElementsCache.put(wrapper.getKey(), wrapper.getValue());
 				}
 
 				// 递归处理嵌套iframe
@@ -187,7 +187,7 @@ public class InteractiveTextProcessor {
 	 * @param driver WebDriver实例
 	 * @return 包装后的可交互元素列表
 	 */
-	public List<WebElementWrapper> getInteractiveElements(WebDriver driver) {
+	public Map<Integer, WebElementWrapper> getInteractiveElements(WebDriver driver) {
 		if (interactiveElementsCache == null) {
 			refreshCache(driver);
 		}
@@ -199,20 +199,23 @@ public class InteractiveTextProcessor {
 	 * @param driver WebDriver实例
 	 * @return 当前文档中的交互元素列表
 	 */
-	private List<WebElementWrapper> getInteractiveElementsInner(WebDriver driver) {
+	private HashMap<Integer, WebElementWrapper> getInteractiveElementsInner(WebDriver driver) {
 		try {
 			List<WebElement> elements = driver.findElements(By.cssSelector(INTERACTIVE_ELEMENTS_SELECTOR));
 			List<WebElement> visibleElements = elements.stream()
 				.filter(this::isElementVisible)
 				.collect(Collectors.toList());
 
-			List<WebElementWrapper> result = new ArrayList<>();
+			var result = new HashMap<Integer, WebElementWrapper>();
 			for (int i = 0; i < visibleElements.size(); i++) {
 				WebElement element = visibleElements.get(i);
+				var webElementWrapper = new WebElementWrapper(element, "");
 				// 获取元素信息字符串，传递索引参数
-				String elementInfo = generateElementInfoString(i, element, driver);
-				// 创建并返回包装对象
-				result.add(new WebElementWrapper(element, elementInfo));
+				int key = generateElementInfoString(element, driver, webElementWrapper);
+				if (key != -1) {
+					// 创建并返回包装对象
+					result.put(key, webElementWrapper);
+				}
 			}
 			return result;
 		}
@@ -226,19 +229,22 @@ public class InteractiveTextProcessor {
 					.filter(this::isElementVisible)
 					.collect(Collectors.toList());
 
-				List<WebElementWrapper> result = new ArrayList<>();
+				var result = new HashMap<Integer, WebElementWrapper>();
 				for (int i = 0; i < visibleElements.size(); i++) {
 					WebElement element = visibleElements.get(i);
+					var webElementWrapper = new WebElementWrapper(element, "");
 					// 获取元素信息字符串，传递索引参数
-					String elementInfo = generateElementInfoString(i, element, driver);
-					// 创建并返回包装对象
-					result.add(new WebElementWrapper(element, elementInfo));
+					int key = generateElementInfoString(element, driver, webElementWrapper);
+					if (key != -1) {
+						// 创建并返回包装对象
+						result.put(key, webElementWrapper);
+					}
 				}
 				return result;
 			}
 			catch (Exception retryEx) {
 				log.error("重试获取元素失败: {}", retryEx.getMessage());
-				return new ArrayList<>(); // 返回空列表而不是抛出异常
+				return new HashMap<>();
 			}
 		}
 	}
@@ -249,7 +255,7 @@ public class InteractiveTextProcessor {
 	 * @param driver WebDriver实例
 	 * @return 元素的详细信息字符串
 	 */
-	private String generateElementInfoString(int index, WebElement element, WebDriver driver) {
+	private int generateElementInfoString(WebElement element, WebDriver driver, WebElementWrapper webElementWrapper) {
 		try {
 			// 使用JavaScript获取元素的详细信息
 			JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -283,7 +289,7 @@ public class InteractiveTextProcessor {
 					""", element);
 
 			if (props == null || !(Boolean) props.get("isVisible")) {
-				return "";
+				return -1;
 			}
 
 			// 构建HTML属性字符串
@@ -315,12 +321,16 @@ public class InteractiveTextProcessor {
 			String tagName = (String) props.get("tagName");
 			String text = (String) props.get("text");
 
+			String fullTag = String.format("<%s%s>%s</%s>", tagName, attributes, text, tagName);
+
+			webElementWrapper.setElementInfoString(String.format("[%d] %s\n", fullTag.hashCode(), fullTag));
+
 			// 生成标准HTML格式输出
-			return String.format("[%d] <%s%s>%s</%s>\n", index, tagName, attributes.toString(), text, tagName);
+			return fullTag.hashCode();
 		}
 		catch (Exception e) {
 			log.warn("生成元素信息字符串失败: {}", e.getMessage());
-			return "";
+			return -1;
 		}
 	}
 
@@ -347,10 +357,10 @@ public class InteractiveTextProcessor {
 	 */
 	public String getInteractiveElementsInfo(WebDriver driver) {
 		StringBuilder resultInfo = new StringBuilder();
-		List<WebElementWrapper> interactiveElements = getInteractiveElements(driver);
+		Map<Integer, WebElementWrapper> interactiveElements = getInteractiveElements(driver);
 
-		for (int i = 0; i < interactiveElements.size(); i++) {
-			String formattedInfo = interactiveElements.get(i).getElementInfoString();
+		for (WebElementWrapper webElementWrapper: interactiveElements.values()) {
+			String formattedInfo = webElementWrapper.getElementInfoString();
 			resultInfo.append(formattedInfo);
 		}
 

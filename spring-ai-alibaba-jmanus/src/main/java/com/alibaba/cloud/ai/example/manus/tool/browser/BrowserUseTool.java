@@ -257,12 +257,12 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 					return new ToolExecuteResult("Navigated to " + url);
 				}
 				case "click": {
-					List<WebElementWrapper> interactiveElements = getInteractiveElements(driver);
+					Map<Integer, WebElementWrapper> interactiveElements = getInteractiveElements(driver);
 					if (index == null) {
 						return new ToolExecuteResult("Index is required for 'click' action");
 					}
 
-					if (index < 0 || index >= interactiveElements.size()) {
+					if (!interactiveElements.containsKey(index)) {
 						return new ToolExecuteResult("Element with index " + index + " not found");
 					}
 
@@ -330,8 +330,8 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 					if (index == null || text == null) {
 						return new ToolExecuteResult("Index and text are required for 'input_text' action");
 					}
-					List<WebElementWrapper> interactiveElements = getInteractiveElements(driver);
-					if (index < 0 || index >= interactiveElements.size()) {
+					Map<Integer, WebElementWrapper> interactiveElements = getInteractiveElements(driver);
+					if (!interactiveElements.containsKey(index)) {
 						return new ToolExecuteResult("Element with index " + index + " not found");
 					}
 					WebElementWrapper inputElementWrapper = interactiveElements.get(index);
@@ -349,8 +349,8 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 					if (index == null) {
 						return new ToolExecuteResult("Index is required for 'key_enter' action");
 					}
-					List<WebElementWrapper> interactiveElements = getInteractiveElements(driver);
-					if (index < 0 || index >= interactiveElements.size()) {
+					Map<Integer, WebElementWrapper> interactiveElements = getInteractiveElements(driver);
+					if (!interactiveElements.containsKey(index)) {
 						return new ToolExecuteResult("Element with index " + index + " not found");
 					}
 					WebElementWrapper enterElementWrapper = interactiveElements.get(index);
@@ -465,7 +465,7 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 	 * @param driver WebDriver实例
 	 * @return 可交互元素列表
 	 */
-	private List<WebElementWrapper> getInteractiveElements(WebDriver driver) {
+	private Map<Integer, WebElementWrapper> getInteractiveElements(WebDriver driver) {
 		return interactiveTextProcessor.getInteractiveElements(driver);
 	}
 

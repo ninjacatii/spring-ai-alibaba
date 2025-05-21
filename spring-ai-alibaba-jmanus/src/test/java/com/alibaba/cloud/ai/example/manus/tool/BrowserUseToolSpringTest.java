@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,8 +144,15 @@ class BrowserUseToolSpringTest {
 			String[] elementLines = elements.split("\n");
 			for (int i = 0; i < elementLines.length; i++) {
 				if (elementLines[i].contains("name=\"wd\"") || elementLines[i].contains("id=\"kw\"")) { // 百度搜索框的特征
-					searchInputIndex = i;
-					break;
+					// 正则表达式匹配方括号内的带符号整数
+					Pattern pattern = Pattern.compile("\\[(-?\\d+)\\]");
+					Matcher matcher = pattern.matcher(elementLines[i]);
+
+					if (matcher.find()) {
+						String numberStr = matcher.group(1);  // 提取捕获组中的数字部分
+						searchInputIndex = Integer.parseInt(numberStr);
+						break;
+					}
 				}
 			}
 			Assertions.assertNotEquals(-1, searchInputIndex, "未找到搜索框");
@@ -162,8 +171,15 @@ class BrowserUseToolSpringTest {
 			elementLines = elements.split("\n");
 			for (int i = 0; i < elementLines.length; i++) {
 				if (elementLines[i].contains("value=\"百度一下\"") || elementLines[i].contains(">百度一下<")) {
-					searchButtonIndex = i;
-					break;
+					// 正则表达式匹配方括号内的带符号整数
+					Pattern pattern = Pattern.compile("\\[(-?\\d+)\\]");
+					Matcher matcher = pattern.matcher(elementLines[i]);
+
+					if (matcher.find()) {
+						String numberStr = matcher.group(1);  // 提取捕获组中的数字部分
+						searchButtonIndex = Integer.parseInt(numberStr);
+						break;
+					}
 				}
 			}
 			Assertions.assertNotEquals(-1, searchButtonIndex, "未找到搜索按钮");

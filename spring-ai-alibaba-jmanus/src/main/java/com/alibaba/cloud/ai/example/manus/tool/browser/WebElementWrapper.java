@@ -15,17 +15,21 @@
  */
 package com.alibaba.cloud.ai.example.manus.tool.browser;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 /**
  * WebElement的包装类，同时包含元素本身和元素的详细信息。 这个类使得在处理网页元素时能够一次获取WebElement及其相关信息。
  */
+@Getter
+@Setter
 public class WebElementWrapper {
 
-	private final WebElement element;
+	private WebElement element;
 
-	private final String elementInfoString;
+	private String elementInfoString;
 
 	private WebElement iframeElement; // 元素所属的iframe元素，如果在主文档中则为null
 
@@ -55,54 +59,6 @@ public class WebElementWrapper {
 		this.element = element;
 		this.elementInfoString = elementInfoString;
 		this.iframeElement = iframeElement;
-		this.iframePath = iframePath;
-	}
-
-	/**
-	 * 获取包装的WebElement对象
-	 * @return WebElement对象
-	 */
-	public WebElement getElement() {
-		return element;
-	}
-
-	/**
-	 * 获取元素的详细信息字符串
-	 * @return 元素详细信息字符串
-	 */
-	public String getElementInfoString() {
-		return elementInfoString;
-	}
-
-	/**
-	 * 获取元素所属的iframe元素
-	 * @return 元素所属的iframe元素，如果在主文档中则为null
-	 */
-	public WebElement getIframeElement() {
-		return iframeElement;
-	}
-
-	/**
-	 * 设置元素所属的iframe元素
-	 * @param iframeElement 元素所属的iframe元素
-	 */
-	public void setIframeElement(WebElement iframeElement) {
-		this.iframeElement = iframeElement;
-	}
-
-	/**
-	 * 获取iframe的路径
-	 * @return iframe的路径，如"0/2/1"表示第一个iframe中的第三个iframe中的第二个iframe
-	 */
-	public String getIframePath() {
-		return iframePath;
-	}
-
-	/**
-	 * 设置iframe的路径
-	 * @param iframePath iframe的路径
-	 */
-	public void setIframePath(String iframePath) {
 		this.iframePath = iframePath;
 	}
 
