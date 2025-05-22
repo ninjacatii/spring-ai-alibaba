@@ -541,7 +541,7 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 			state.put("screenshot", base64Screenshot);
 
 			// 添加帮助信息
-			state.put("help", "[0], [1], [2], etc., represent clickable indices corresponding to the elements listed. "
+			state.put("help", "[-123412], [43242342], [2645788], etc., represent clickable indices corresponding to the elements listed. "
 					+ "Clicking on these indices will navigate to or interact with the respective content behind them.");
 
 			return state;

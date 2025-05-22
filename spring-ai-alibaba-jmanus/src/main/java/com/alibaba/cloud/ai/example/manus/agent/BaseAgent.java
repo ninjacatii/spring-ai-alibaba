@@ -137,6 +137,7 @@ public abstract class BaseAgent {
 				1. 使用工具调用时，不需要额外的任何解释说明！
 				2. 不要在工具调用前提供推理或描述！
 				3. 专注于立即行动而非解释！
+				4. 专注于“当前要做的步骤要求”，不需要其它多余的思考或动作!
 
 				""".formatted(osName, osVersion, osArch, currentDateTime);
 

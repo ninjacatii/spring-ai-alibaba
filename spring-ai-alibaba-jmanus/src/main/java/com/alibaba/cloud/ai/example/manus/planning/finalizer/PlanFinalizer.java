@@ -18,6 +18,7 @@ package com.alibaba.cloud.ai.example.manus.planning.finalizer;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.cloud.ai.example.manus.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -92,7 +93,7 @@ public class PlanFinalizer {
 
 			Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
-			ChatResponse response = llmService.getPlanningChatClient()
+			ChatResponse response = Utils.getFlowChatResponse(llmService.getPlanningChatClient()
 				.prompt(prompt)
 				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", plan.getPlanId())
 					.param("chat_memory_retrieve_size", 100))
@@ -101,8 +102,7 @@ public class PlanFinalizer {
 							response1 -> "Custom response: " + response1.getResult(),
 							0
 					))
-				.call()
-				.chatResponse();
+				.stream().chatResponse());
 
 			String summary = response.getResult().getOutput().getText();
 			context.setResultSummary(summary);

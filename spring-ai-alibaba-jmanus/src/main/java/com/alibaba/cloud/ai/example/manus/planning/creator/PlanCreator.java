@@ -22,10 +22,12 @@ import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionContext;
 import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionPlan;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 import com.alibaba.cloud.ai.example.manus.tool.PlanningTool;
+import com.alibaba.cloud.ai.example.manus.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
@@ -76,7 +78,7 @@ public class PlanCreator {
 			PromptTemplate promptTemplate = new PromptTemplate(planPrompt);
 			Prompt prompt = promptTemplate.create();
 
-			ChatClient.CallResponseSpec response = llmService.getPlanningChatClient()
+			ChatResponse response = Utils.getFlowChatResponse(llmService.getPlanningChatClient()
 				.prompt(prompt)
 				.toolCallbacks(List.of(planningTool.getFunctionToolCallback()))
 				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", planId)
@@ -86,8 +88,8 @@ public class PlanCreator {
 							response1 -> "Custom response: " + response1.getResult(),
 							0
 					))
-				.call();
-			String outputText = response.chatResponse().getResult().getOutput().getText();
+				.stream().chatResponse());
+			String outputText = response.getResult().getOutput().getText();
 			// 检查计划是否创建成功
 			if (planId.equals(planningTool.getCurrentPlanId())) {
 				currentPlan = planningTool.getCurrentPlan();

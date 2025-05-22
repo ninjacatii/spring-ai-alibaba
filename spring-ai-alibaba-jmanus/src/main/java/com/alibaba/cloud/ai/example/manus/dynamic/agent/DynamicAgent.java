@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.cloud.ai.example.manus.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
@@ -110,7 +111,7 @@ public class DynamicAgent extends ReActAgent {
 
 			userPrompt = new Prompt(messages, chatOptions);
 
-			response = llmService.getAgentChatClient(getPlanId())
+			response = Utils.getFlowChatResponse(llmService.getAgentChatClient(getPlanId())
 				.getChatClient()
 				.prompt(userPrompt)
 				.advisors(memoryAdvisor -> memoryAdvisor.param(CHAT_MEMORY_CONVERSATION_ID_KEY, getPlanId())
@@ -121,8 +122,8 @@ public class DynamicAgent extends ReActAgent {
 							response -> "Custom response: " + response.getResult(),
 							0
 					))
-				.call()
-				.chatResponse();
+					.stream()
+					.chatResponse());
 
 			List<ToolCall> toolCalls = response.getResult().getOutput().getToolCalls();
 			String responseByLLm = response.getResult().getOutput().getText();
