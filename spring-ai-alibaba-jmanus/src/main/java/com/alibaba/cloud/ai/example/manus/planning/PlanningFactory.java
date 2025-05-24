@@ -16,6 +16,7 @@
 
 package com.alibaba.cloud.ai.example.manus.planning;
 
+import cn.hutool.core.io.FileUtil;
 import com.alibaba.cloud.ai.example.manus.config.ManusProperties;
 import com.alibaba.cloud.ai.example.manus.dynamic.agent.entity.DynamicAgentEntity;
 import com.alibaba.cloud.ai.example.manus.dynamic.agent.service.DynamicAgentLoader;
@@ -62,6 +63,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import com.alibaba.cloud.ai.example.manus.dynamic.agent.service.AgentService;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -170,11 +173,11 @@ public class PlanningFactory {
 		// 添加所有工具定义
 		toolDefinitions.add(BrowserUseTool.getInstance(chromeDriverService));
 		toolDefinitions.add(new TerminateTool(planId));
-		toolDefinitions.add(new Bash(CodeUtils.WORKING_DIR));
+		toolDefinitions.add(new Bash(CodeUtils.WORKING_DIR + File.separator + planId));
 		toolDefinitions.add(new DocLoaderTool());
-		toolDefinitions.add(new TextFileOperator(CodeUtils.WORKING_DIR, textFileService));
-		toolDefinitions.add(new TextFileSaveTool(CodeUtils.WORKING_DIR, textFileService));
-		toolDefinitions.add(new TextFileOpenTool(CodeUtils.WORKING_DIR, textFileService));
+		toolDefinitions.add(new TextFileOperator(CodeUtils.WORKING_DIR + File.separator + planId, textFileService));
+		toolDefinitions.add(new TextFileSaveTool(CodeUtils.WORKING_DIR + File.separator + planId, textFileService));
+		toolDefinitions.add(new TextFileOpenTool(CodeUtils.WORKING_DIR + File.separator + planId, textFileService));
 		toolDefinitions.add(new GoogleSearch());
 		toolDefinitions.add(new PythonExecute());
 		List<McpServiceEntity> functionCallbacks = mcpService.getFunctionCallbacks();

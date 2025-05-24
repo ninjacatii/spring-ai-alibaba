@@ -18,6 +18,8 @@ package com.alibaba.cloud.ai.example.manus.planning.finalizer;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.convert.Convert;
+import com.alibaba.cloud.ai.example.manus.util.SpringContextUtil;
 import com.alibaba.cloud.ai.example.manus.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,16 +95,16 @@ public class PlanFinalizer {
 
 			Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
-			ChatResponse response = Utils.getFlowChatResponse(llmService.getPlanningChatClient()
+			boolean useStream = Convert.toBool(SpringContextUtil.getProperty("custom.useStream"));
+
+			ChatResponse response = useStream ? Utils.getFlowChatResponse(llmService.getPlanningChatClient()
 				.prompt(prompt)
 				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", plan.getPlanId())
 					.param("chat_memory_retrieve_size", 100))
-					.advisors(new SimpleLoggerAdvisor(
-							request -> "Custom request: " + request.userText(),
-							response1 -> "Custom response: " + response1.getResult(),
-							0
-					))
-				.stream().chatResponse());
+				.stream().chatResponse()) : llmService.getPlanningChatClient()
+					.prompt(prompt)
+					.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", plan.getPlanId())
+							.param("chat_memory_retrieve_size", 100)).call().chatResponse();
 
 			String summary = response.getResult().getOutput().getText();
 			context.setResultSummary(summary);

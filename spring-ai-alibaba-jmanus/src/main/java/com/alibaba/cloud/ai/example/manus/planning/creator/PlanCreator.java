@@ -16,12 +16,14 @@
  */
 package com.alibaba.cloud.ai.example.manus.planning.creator;
 
+import cn.hutool.core.convert.Convert;
 import com.alibaba.cloud.ai.example.manus.dynamic.agent.entity.DynamicAgentEntity;
 import com.alibaba.cloud.ai.example.manus.llm.LlmService;
 import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionContext;
 import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionPlan;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 import com.alibaba.cloud.ai.example.manus.tool.PlanningTool;
+import com.alibaba.cloud.ai.example.manus.util.SpringContextUtil;
 import com.alibaba.cloud.ai.example.manus.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,7 @@ import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.List;
 
@@ -78,17 +81,18 @@ public class PlanCreator {
 			PromptTemplate promptTemplate = new PromptTemplate(planPrompt);
 			Prompt prompt = promptTemplate.create();
 
-			ChatResponse response = Utils.getFlowChatResponse(llmService.getPlanningChatClient()
+			boolean useStream = Convert.toBool(SpringContextUtil.getProperty("custom.useStream"));
+
+			ChatResponse response = useStream ? Utils.getFlowChatResponse(llmService.getPlanningChatClient()
 				.prompt(prompt)
 				.toolCallbacks(List.of(planningTool.getFunctionToolCallback()))
 				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", planId)
 					.param("chat_memory_retrieve_size", 100))
-					.advisors(new SimpleLoggerAdvisor(
-							request -> "Custom request: " + request.userText(),
-							response1 -> "Custom response: " + response1.getResult(),
-							0
-					))
-				.stream().chatResponse());
+				.stream().chatResponse()) : llmService.getPlanningChatClient()
+					.prompt(prompt)
+					.toolCallbacks(List.of(planningTool.getFunctionToolCallback()))
+					.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", planId)
+							.param("chat_memory_retrieve_size", 100)).call().chatResponse();
 			String outputText = response.getResult().getOutput().getText();
 			// 检查计划是否创建成功
 			if (planId.equals(planningTool.getCurrentPlanId())) {

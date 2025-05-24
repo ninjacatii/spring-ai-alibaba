@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.convert.Convert;
+import com.alibaba.cloud.ai.example.manus.util.SpringContextUtil;
 import com.alibaba.cloud.ai.example.manus.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,19 +113,21 @@ public class DynamicAgent extends ReActAgent {
 
 			userPrompt = new Prompt(messages, chatOptions);
 
-			response = Utils.getFlowChatResponse(llmService.getAgentChatClient(getPlanId())
+			boolean useStream = Convert.toBool(SpringContextUtil.getProperty("custom.useStream"));
+
+			response = useStream ? Utils.getFlowChatResponse(llmService.getAgentChatClient(getPlanId())
 				.getChatClient()
 				.prompt(userPrompt)
 				.advisors(memoryAdvisor -> memoryAdvisor.param(CHAT_MEMORY_CONVERSATION_ID_KEY, getPlanId())
 					.param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100))
 				.toolCallbacks(getToolCallList())
-					.advisors(new SimpleLoggerAdvisor(
-							request -> "Custom request: " + request.userText(),
-							response -> "Custom response: " + response.getResult(),
-							0
-					))
 					.stream()
-					.chatResponse());
+					.chatResponse()) : llmService.getAgentChatClient(getPlanId())
+					.getChatClient()
+					.prompt(userPrompt)
+					.advisors(memoryAdvisor -> memoryAdvisor.param(CHAT_MEMORY_CONVERSATION_ID_KEY, getPlanId())
+							.param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100))
+					.toolCallbacks(getToolCallList()).call().chatResponse();
 
 			List<ToolCall> toolCalls = response.getResult().getOutput().getToolCalls();
 			String responseByLLm = response.getResult().getOutput().getText();

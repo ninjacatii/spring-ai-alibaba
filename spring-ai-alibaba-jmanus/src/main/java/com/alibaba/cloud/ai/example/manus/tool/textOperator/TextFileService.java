@@ -67,7 +67,10 @@ public class TextFileService implements ApplicationRunner {
 
 	public void closeFileForPlan(String planId) {
 		synchronized (getFileLock(planId)) {
-			fileStates.remove(planId);
+			//如果在文件写入内容后，比如：写入123。要再次读取文件并对文件内容进行验证，比如，查看该文件的内容是否是123。
+			//在执行下句后，无法找到写入的文件是啥，也无法知道最后一次的文件状态
+			//暂时注释。
+			//fileStates.remove(planId);
 			log.info("Closed file state for plan: {}", planId);
 		}
 	}
