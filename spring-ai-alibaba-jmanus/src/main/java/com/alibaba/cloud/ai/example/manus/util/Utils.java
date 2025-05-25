@@ -1,6 +1,7 @@
 package com.alibaba.cloud.ai.example.manus.util;
 
 import cn.hutool.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+@Slf4j
 public class Utils {
     private static AssistantMessage mergeGenerations(List<Generation> generations) {
         var combinedContent = new StringBuilder();
@@ -69,11 +71,16 @@ public class Utils {
         Mono<ChatResponse> chatResponseMono = getMonoChatResponse(responseFlux);
         var list = new ArrayList<ChatResponse>();
         var latch = new CountDownLatch(1);
-        chatResponseMono.subscribe(mergedResponse -> {
-            list.add(mergedResponse);
-            latch.countDown();
-        });
-        latch.await();
+        try {
+            chatResponseMono.subscribe(mergedResponse -> {
+                list.add(mergedResponse);
+                latch.countDown();
+            });
+        } catch (Exception e) {
+            log.error("getFlowChatResponse error", e);
+        } finally {
+            latch.await();
+        }
         return list.get(0);
     }
 }

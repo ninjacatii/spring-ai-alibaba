@@ -109,7 +109,7 @@ public class TextFileOperator implements ToolCallBiFunctionDef {
 			- replace: 替换文件中的特定文本
 			- get_text: 获取文件的当前内容
 			- save: 保存并关闭文件
-			- append: 向文件追加内容
+			- append: 向文件追加内容后保存并关闭文件
 			- count_words: 统计当前文件中的单词数量
 
 			支持的文件类型包括：
@@ -305,8 +305,13 @@ public class TextFileOperator implements ToolCallBiFunctionDef {
 			Path absolutePath = Paths.get(workingDirectoryPath).resolve(currentFilePath);
 			Files.writeString(absolutePath, "\n" + content, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
 
-			textFileService.updateFileState(planId, currentFilePath, "Success: Content appended");
-			return new ToolExecuteResult("Content appended successfully: " + absolutePath);
+			// 强制刷新到磁盘
+			try (FileChannel channel = FileChannel.open(absolutePath, StandardOpenOption.WRITE)) {
+				channel.force(true);
+			}
+
+			textFileService.updateFileState(planId, currentFilePath, "Success: Content appended and file saved and file closed");
+			return new ToolExecuteResult("Content appended and file saved and file closed successfully: " + absolutePath);
 		}
 		catch (IOException e) {
 			textFileService.updateFileState(planId, textFileService.getCurrentFilePath(planId),

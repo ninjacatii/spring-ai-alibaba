@@ -16,6 +16,7 @@
 
 package com.alibaba.cloud.ai.example.manus.planning;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.cloud.ai.example.manus.config.ManusProperties;
 import com.alibaba.cloud.ai.example.manus.dynamic.agent.entity.DynamicAgentEntity;
@@ -173,11 +174,12 @@ public class PlanningFactory {
 		// 添加所有工具定义
 		toolDefinitions.add(BrowserUseTool.getInstance(chromeDriverService));
 		toolDefinitions.add(new TerminateTool(planId));
-		toolDefinitions.add(new Bash(CodeUtils.WORKING_DIR + File.separator + planId));
+		String dir = CodeUtils.WORKING_DIR + File.separator + DateUtil.now();
+		toolDefinitions.add(new Bash(dir));
 		toolDefinitions.add(new DocLoaderTool());
-		toolDefinitions.add(new TextFileOperator(CodeUtils.WORKING_DIR + File.separator + planId, textFileService));
-		toolDefinitions.add(new TextFileSaveTool(CodeUtils.WORKING_DIR + File.separator + planId, textFileService));
-		toolDefinitions.add(new TextFileOpenTool(CodeUtils.WORKING_DIR + File.separator + planId, textFileService));
+		toolDefinitions.add(new TextFileOperator(dir, textFileService));
+		toolDefinitions.add(new TextFileSaveTool(dir, textFileService));
+		toolDefinitions.add(new TextFileOpenTool(dir, textFileService));
 		toolDefinitions.add(new GoogleSearch());
 		toolDefinitions.add(new PythonExecute());
 		List<McpServiceEntity> functionCallbacks = mcpService.getFunctionCallbacks();
