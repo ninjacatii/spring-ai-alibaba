@@ -112,22 +112,12 @@ public class DynamicAgent extends ReActAgent {
 			log.debug("Messages prepared for the prompt: {}", messages);
 
 			userPrompt = new Prompt(messages, chatOptions);
-
-			boolean useStream = Convert.toBool(SpringContextUtil.getProperty("custom.useStream"));
-
-			response = useStream ? Utils.getFlowChatResponse(llmService.getAgentChatClient(getPlanId())
+			response = Utils.getChatResponse(llmService.getAgentChatClient(getPlanId())
 				.getChatClient()
 				.prompt(userPrompt)
 				.advisors(memoryAdvisor -> memoryAdvisor.param(CHAT_MEMORY_CONVERSATION_ID_KEY, getPlanId())
 					.param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100))
-				.toolCallbacks(getToolCallList())
-					.stream()
-					.chatResponse()) : llmService.getAgentChatClient(getPlanId())
-					.getChatClient()
-					.prompt(userPrompt)
-					.advisors(memoryAdvisor -> memoryAdvisor.param(CHAT_MEMORY_CONVERSATION_ID_KEY, getPlanId())
-							.param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100))
-					.toolCallbacks(getToolCallList()).call().chatResponse();
+				.toolCallbacks(getToolCallList()));
 
 			List<ToolCall> toolCalls = response.getResult().getOutput().getToolCalls();
 			String responseByLLm = response.getResult().getOutput().getText();

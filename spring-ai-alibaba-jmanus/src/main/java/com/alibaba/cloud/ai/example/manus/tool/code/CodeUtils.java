@@ -15,10 +15,9 @@
  */
 package com.alibaba.cloud.ai.example.manus.tool.code;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
@@ -29,16 +28,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+@Slf4j
 public class CodeUtils {
-
-	private static final Logger log = LoggerFactory.getLogger(CodeUtils.class);
-
 	private static final String CODE_BLOCK_PATTERN = "```(\\w*)\n(.*?)\n```";
 
 	private static final String UNKNOWN = "unknown";
@@ -78,18 +76,16 @@ public class CodeUtils {
 		if (content instanceof String) {
 			return (String) content;
 		}
-		String rst = "";
+		StringBuilder rst = new StringBuilder();
 		List<Map<String, Object>> itemList = (List<Map<String, Object>>) content;
 		for (Map<String, Object> item : itemList) {
 			if (item.get("type").equals("text")) {
-				rst += item.get("text");
-			}
-			else {
-				assert item instanceof Map && item.get("type").equals("image_url") : "Wrong content format.";
-				rst += "";
-			}
+				rst.append(item.get("text"));
+			} else {
+				assert item.get("type").equals("image_url") : "Wrong content format.";
+            }
 		}
-		return rst;
+		return rst.toString();
 	}
 
 	public static CodeExecutionResult executeCode(String code, String lang, String filename, Boolean arm64,
@@ -204,15 +200,18 @@ public class CodeUtils {
 		String response = EMPTY;
 		while (true) {
 			try {
-				if (!((response = reader.readLine()) != null)) {
+				if ((response = reader.readLine()) == null) {
 					break;
 				}
-			}
-			catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 			resultList.add(response);
 		}
-		return resultList.stream().collect(Collectors.joining("\n"));
+        StringJoiner joiner = new StringJoiner("\n");
+        for (String s : resultList) {
+            joiner.add(s);
+        }
+        return joiner.toString();
 	}
 
 }

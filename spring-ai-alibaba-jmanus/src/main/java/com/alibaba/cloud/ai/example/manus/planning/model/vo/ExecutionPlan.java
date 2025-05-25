@@ -19,21 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.cloud.ai.example.manus.agent.AgentState;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 计划实体类，用于管理执行计划的相关信息
  */
+@Getter
+@Setter
 public class ExecutionPlan {
-
 	private String planId;
-
 	private String title;
-
 	private String planningThinking;
-
 	// 使用简单字符串存储执行参数
 	private String executionParams;
-
 	private List<ExecutionStep> steps;
 
 	public ExecutionPlan(String planId, String title) {
@@ -43,56 +42,14 @@ public class ExecutionPlan {
 		this.executionParams = "";
 	}
 
-	public String getPlanId() {
-		return planId;
-	}
-
-	public void setPlanId(String planId) {
-		this.planId = planId;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public List<ExecutionStep> getSteps() {
-		return steps;
-	}
-
-	public void setSteps(List<ExecutionStep> steps) {
-		this.steps = steps;
-	}
-
 	public void addStep(ExecutionStep step) {
 		this.steps.add(step);
 	}
-
 	public void removeStep(ExecutionStep step) {
 		this.steps.remove(step);
 	}
-
 	public int getStepCount() {
 		return steps.size();
-	}
-
-	public String getPlanningThinking() {
-		return planningThinking;
-	}
-
-	public void setPlanningThinking(String planningThinking) {
-		this.planningThinking = planningThinking;
-	}
-
-	public String getExecutionParams() {
-		return executionParams;
-	}
-
-	public void setExecutionParams(String executionParams) {
-		this.executionParams = executionParams;
 	}
 
 	@Override

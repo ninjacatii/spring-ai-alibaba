@@ -20,6 +20,7 @@ import com.alibaba.cloud.ai.example.manus.tool.code.ToolExecuteResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -37,18 +38,15 @@ import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 
+@Slf4j
 public class BrowserUseTool implements ToolCallBiFunctionDef {
-
-	private static final Logger log = LoggerFactory.getLogger(BrowserUseTool.class);
-
 	private final ChromeDriverService chromeDriverService;
-
 	private final InteractiveTextProcessor interactiveTextProcessor = new InteractiveTextProcessor();
-
 	// 添加标签页缓存字段
 	private List<Map<String, Object>> cachedTabs;
-
 	private String planId;
+
+	private final int MAX_LENGTH = 20000;
 
 	public BrowserUseTool(ChromeDriverService chromeDriverService) {
 		this.chromeDriverService = chromeDriverService;
@@ -57,8 +55,6 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 	private WebDriver getDriver() {
 		return chromeDriverService.getDriver(planId);
 	}
-
-	private final int MAX_LENGTH = 20000;
 
 	private final String PARAMETERS = """
 			{
@@ -168,8 +164,7 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 	}
 
 	public static synchronized BrowserUseTool getInstance(ChromeDriverService chromeDriverService) {
-		BrowserUseTool instance = new BrowserUseTool(chromeDriverService);
-		return instance;
+        return new BrowserUseTool(chromeDriverService);
 	}
 
 	public FunctionToolCallback getFunctionToolCallback(ChromeDriverService chromeDriverService) {
@@ -182,7 +177,6 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 
 	private void simulateHumanBehavior(WebElement element) {
 		try {
-
 			// 添加随机延迟
 			Thread.sleep(new Random().nextInt(500) + 200);
 		}
@@ -556,7 +550,6 @@ public class BrowserUseTool implements ToolCallBiFunctionDef {
 
 	@Override
 	public ToolExecuteResult apply(String t, ToolContext u) {
-
 		return run(t);
 	}
 

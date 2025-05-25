@@ -16,56 +16,37 @@
  */
 package com.alibaba.cloud.ai.example.manus.planning.creator;
 
-import cn.hutool.core.convert.Convert;
 import com.alibaba.cloud.ai.example.manus.dynamic.agent.entity.DynamicAgentEntity;
 import com.alibaba.cloud.ai.example.manus.llm.LlmService;
 import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionContext;
 import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionPlan;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 import com.alibaba.cloud.ai.example.manus.tool.PlanningTool;
-import com.alibaba.cloud.ai.example.manus.util.SpringContextUtil;
 import com.alibaba.cloud.ai.example.manus.util.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.List;
 
 /**
  * 负责创建执行计划的类
  */
+@Slf4j
+@AllArgsConstructor
 public class PlanCreator {
-
-	private static final Logger log = LoggerFactory.getLogger(PlanCreator.class);
-
 	private final List<DynamicAgentEntity> agents;
-
 	private final LlmService llmService;
-
 	private final PlanningTool planningTool;
-
 	protected final PlanExecutionRecorder recorder;
-
-	public PlanCreator(List<DynamicAgentEntity> agents, LlmService llmService, PlanningTool planningTool,
-			PlanExecutionRecorder recorder) {
-		this.agents = agents;
-		this.llmService = llmService;
-		this.planningTool = planningTool;
-		this.recorder = recorder;
-	}
 
 	/**
 	 * 根据用户请求创建执行计划
-	 * @param userRequest 用户请求
-	 * @return 计划创建结果
+	 * @param context 执行时的上下文
 	 */
 	public void createPlan(ExecutionContext context) {
-
 		String planId = context.getPlanId();
 		if (planId == null || planId.isEmpty()) {
 			throw new IllegalArgumentException("Plan ID cannot be null or empty");
@@ -78,21 +59,15 @@ public class PlanCreator {
 			String planPrompt = generatePlanPrompt(context.getUserRequest(), agentsInfo, planId);
 
 			// 使用 LLM 生成计划
-			PromptTemplate promptTemplate = new PromptTemplate(planPrompt);
+			var promptTemplate = new PromptTemplate(planPrompt);
 			Prompt prompt = promptTemplate.create();
 
-			boolean useStream = Convert.toBool(SpringContextUtil.getProperty("custom.useStream"));
-
-			ChatResponse response = useStream ? Utils.getFlowChatResponse(llmService.getPlanningChatClient()
+			ChatResponse response = Utils.getChatResponse(llmService.getPlanningChatClient()
 				.prompt(prompt)
 				.toolCallbacks(List.of(planningTool.getFunctionToolCallback()))
 				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", planId)
 					.param("chat_memory_retrieve_size", 100))
-				.stream().chatResponse()) : llmService.getPlanningChatClient()
-					.prompt(prompt)
-					.toolCallbacks(List.of(planningTool.getFunctionToolCallback()))
-					.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", planId)
-							.param("chat_memory_retrieve_size", 100)).call().chatResponse();
+				);
 			String outputText = response.getResult().getOutput().getText();
 			// 检查计划是否创建成功
 			if (planId.equals(planningTool.getCurrentPlanId())) {
@@ -101,7 +76,6 @@ public class PlanCreator {
 				currentPlan.setPlanningThinking(outputText);
 			}
 			context.setPlan(currentPlan);
-
 		}
 		catch (Exception e) {
 			log.error("Error creating plan for request: {}", context.getUserRequest(), e);

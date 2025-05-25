@@ -20,26 +20,22 @@ import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionStep;
 import com.alibaba.cloud.ai.example.manus.tool.code.ToolExecuteResult;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.openai.api.OpenAiApi.FunctionTool;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.ai.tool.metadata.ToolMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.util.function.Function;
 
+@Slf4j
 public class PlanningTool implements Function<String, ToolExecuteResult> {
-
-	private static final Logger log = LoggerFactory.getLogger(PlanningTool.class);
-
+	@Getter
 	private ExecutionPlan currentPlan;
 
 	public String getCurrentPlanId() {
 		return currentPlan != null ? currentPlan.getPlanId() : null;
-	}
-
-	public ExecutionPlan getCurrentPlan() {
-		return currentPlan;
 	}
 
 	private static final String PARAMETERS = """
@@ -105,13 +101,13 @@ public class PlanningTool implements Function<String, ToolExecuteResult> {
 
 	public ToolExecuteResult run(String toolInput) {
 		try {
-			Map<String, Object> input = JSON.parseObject(toolInput, new TypeReference<Map<String, Object>>() {
+			Map<String, Object> input = JSON.parseObject(toolInput, new TypeReference<>() {
 			});
 			String command = (String) input.get("command");
 			String planId = (String) input.get("plan_id");
 			String title = (String) input.get("title");
 			List<String> steps = JSON.parseObject(JSON.toJSONString(input.get("steps")),
-					new TypeReference<List<String>>() {
+					new TypeReference<>() {
 					});
 
 			return switch (command) {

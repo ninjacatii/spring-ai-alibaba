@@ -1,5 +1,6 @@
 package com.alibaba.cloud.ai.example.manus.util;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -20,6 +21,14 @@ import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 public class Utils {
+    public static ChatResponse getChatResponse(ChatClient.ChatClientRequestSpec chatClientRequestSpec) throws Exception {
+        return isUseStream() ? getFlowChatResponse(chatClientRequestSpec.stream().chatResponse()) : chatClientRequestSpec.call().chatResponse();
+    }
+
+    public static boolean isUseStream() {
+        return Convert.toBool(SpringContextUtil.getProperty("custom.useStream"));
+    }
+
     private static AssistantMessage mergeGenerations(List<Generation> generations) {
         var combinedContent = new StringBuilder();
         var combinedToolCalls = new ArrayList<AssistantMessage.ToolCall>();

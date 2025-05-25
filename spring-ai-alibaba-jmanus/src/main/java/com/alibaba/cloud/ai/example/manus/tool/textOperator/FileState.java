@@ -16,32 +16,14 @@
  */
 package com.alibaba.cloud.ai.example.manus.tool.textOperator;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
 public class FileState {
-
-	private String currentFilePath = "";
-
-	private String lastOperationResult = "";
-
+	@Setter
+    private String currentFilePath = "";
+	@Setter
+    private String lastOperationResult = "";
 	private final Object fileLock = new Object();
-
-	public String getCurrentFilePath() {
-		return currentFilePath;
-	}
-
-	public void setCurrentFilePath(String currentFilePath) {
-		this.currentFilePath = currentFilePath;
-	}
-
-	public String getLastOperationResult() {
-		return lastOperationResult;
-	}
-
-	public void setLastOperationResult(String lastOperationResult) {
-		this.lastOperationResult = lastOperationResult;
-	}
-
-	public Object getFileLock() {
-		return fileLock;
-	}
-
 }
