@@ -22,15 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import cn.hutool.core.convert.Convert;
-import com.alibaba.cloud.ai.example.manus.util.SpringContextUtil;
 import com.alibaba.cloud.ai.example.manus.util.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
 import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
 
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.messages.AssistantMessage.ToolCall;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
@@ -54,10 +52,8 @@ import com.alibaba.cloud.ai.example.manus.recorder.entity.AgentExecutionRecord;
 import com.alibaba.cloud.ai.example.manus.recorder.entity.ThinkActRecord;
 import com.alibaba.cloud.ai.example.manus.tool.TerminateTool;
 
+@Slf4j
 public class DynamicAgent extends ReActAgent {
-
-	private static final Logger log = LoggerFactory.getLogger(DynamicAgent.class);
-
 	private final String agentName;
 
 	private final String agentDescription;
@@ -66,7 +62,8 @@ public class DynamicAgent extends ReActAgent {
 
 	private final String nextStepPrompt;
 
-	private ToolCallbackProvider toolCallbackProvider;
+	@Setter
+    private ToolCallbackProvider toolCallbackProvider;
 
 	private final List<String> availableToolKeys;
 
@@ -124,15 +121,14 @@ public class DynamicAgent extends ReActAgent {
 
 			thinkActRecord.finishThinking(responseByLLm);
 
-			log.info(String.format("✨ %s's thoughts: %s", getName(), responseByLLm));
-			log.info(String.format("🛠️ %s selected %d tools to use", getName(), toolCalls.size()));
+			log.info("✨ {}'s thoughts: {}", getName(), responseByLLm);
+			log.info("🛠️ {} selected {} tools to use", getName(), toolCalls.size());
 
 			if (responseByLLm != null && !responseByLLm.isEmpty()) {
-				log.info(String.format("💬 %s's response: %s", getName(), responseByLLm));
+				log.info("💬 {}'s response: {}", getName(), responseByLLm);
 			}
 			if (!toolCalls.isEmpty()) {
-				log.info(String.format("🧰 Tools being prepared: %s",
-						toolCalls.stream().map(ToolCall::name).collect(Collectors.toList())));
+				log.info("🧰 Tools being prepared: {}", toolCalls.stream().map(ToolCall::name).collect(Collectors.toList()));
 				thinkActRecord.setActionNeeded(true);
 				thinkActRecord.setToolName(toolCalls.get(0).name());
 				thinkActRecord.setToolParameters(toolCalls.get(0).arguments());
@@ -143,7 +139,7 @@ public class DynamicAgent extends ReActAgent {
 			return !toolCalls.isEmpty();
 		}
 		catch (Exception e) {
-			log.error(String.format("🚨 Oops! The %s's thinking process hit a snag: %s", getName(), e.getMessage()));
+			log.error("🚨 Oops! The {}'s thinking process hit a snag: {}", getName(), e.getMessage());
 			thinkActRecord.recordError(e.getMessage());
 			return false;
 		}
@@ -165,11 +161,11 @@ public class DynamicAgent extends ReActAgent {
 			llmService.getAgentChatClient(getPlanId()).getMemory().add(getPlanId(), toolResponseMessage);
 			String llmCallResponse = toolResponseMessage.getResponses().get(0).responseData();
 
-			log.info(String.format("🔧 Tool %s's executing result: %s", getName(), llmCallResponse));
+			log.info("🔧 Tool {}'s executing result: {}", getName(), llmCallResponse);
 
 			thinkActRecord.finishAction(llmCallResponse, "SUCCESS");
 			String toolcallName = toolCall.name();
-			AgentExecResult agentExecResult = null;
+			AgentExecResult agentExecResult;
 			// 如果是终止工具，则返回完成状态
 			// 否则返回运行状态
 			if (TerminateTool.name.equals(toolcallName)) {
@@ -212,10 +208,9 @@ public class DynamicAgent extends ReActAgent {
 				{current_step_env_data}
 
 				""";
-		nextStepPrompt = nextStepPrompt += this.nextStepPrompt;
+		nextStepPrompt += this.nextStepPrompt;
 		PromptTemplate promptTemplate = new PromptTemplate(nextStepPrompt);
-		Message userMessage = promptTemplate.createMessage(getData());
-		return userMessage;
+        return promptTemplate.createMessage(getData());
 	}
 
 	@Override
@@ -253,11 +248,7 @@ public class DynamicAgent extends ReActAgent {
 		data.put(key, value);
 	}
 
-	public void setToolCallbackProvider(ToolCallbackProvider toolCallbackProvider) {
-		this.toolCallbackProvider = toolCallbackProvider;
-	}
-
-	protected String collectEnvData(String toolCallName) {
+    protected String collectEnvData(String toolCallName) {
 		ToolCallBackContext context = toolCallbackProvider.getToolCallBackContext().get(toolCallName);
 		if (context != null) {
 			return context.getFunctionInstance().getCurrentToolStateString();

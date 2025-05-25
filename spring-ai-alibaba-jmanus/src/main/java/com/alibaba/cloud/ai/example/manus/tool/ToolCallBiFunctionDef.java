@@ -65,7 +65,7 @@ public interface ToolCallBiFunctionDef extends BiFunction<String, ToolContext, T
 	 * 设置关联的Agent实例
 	 * @param planId 计划ID
 	 */
-	public void setPlanId(String planId);
+	void setPlanId(String planId);
 
 	/**
 	 * 获取工具当前的状态字符串

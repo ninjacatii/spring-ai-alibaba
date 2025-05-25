@@ -66,8 +66,7 @@ public class TextFileSaveTool implements ToolCallBiFunctionDef {
     public OpenAiApi.FunctionTool getToolDefinition() {
         OpenAiApi.FunctionTool.Function function = new OpenAiApi.FunctionTool.Function(TOOL_DESCRIPTION, TOOL_NAME,
                 PARAMETERS);
-        OpenAiApi.FunctionTool functionTool = new OpenAiApi.FunctionTool(function);
-        return functionTool;
+        return new OpenAiApi.FunctionTool(function);
     }
 
     public FunctionToolCallback getFunctionToolCallback(String workingDirectoryPath, TextFileService textFileService) {
@@ -81,7 +80,7 @@ public class TextFileSaveTool implements ToolCallBiFunctionDef {
     public ToolExecuteResult run(String toolInput) {
         log.info("TextFileSaveTool toolInput:{}", toolInput);
         try {
-            Map<String, Object> toolInputMap = JSON.parseObject(toolInput, new TypeReference<Map<String, Object>>() {
+            Map<String, Object> toolInputMap = JSON.parseObject(toolInput, new TypeReference<>() {
             });
             String planId = this.planId;
 
