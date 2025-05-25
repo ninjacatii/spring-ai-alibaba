@@ -17,6 +17,7 @@ package com.alibaba.cloud.ai.example.manus.tool;
 
 import com.alibaba.cloud.ai.example.manus.tool.code.ToolExecuteResult;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,8 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.ai.tool.metadata.ToolMetadata;
 
+@Slf4j
 public class TerminateTool implements ToolCallBiFunctionDef {
-
-	private static final Logger log = LoggerFactory.getLogger(TerminateTool.class);
-
 	private static String PARAMETERS = """
 			{
 			  "type" : "object",
