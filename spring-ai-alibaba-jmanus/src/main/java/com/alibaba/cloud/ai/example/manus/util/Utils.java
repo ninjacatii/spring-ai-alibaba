@@ -10,7 +10,9 @@ import org.springframework.ai.chat.metadata.DefaultChatGenerationMetadata;
 import org.springframework.ai.chat.metadata.DefaultUsage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
+import org.springframework.ai.chat.model.MessageAggregator;
 import org.springframework.ai.openai.api.OpenAiApi;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -77,19 +79,28 @@ public class Utils {
     }
 
     public static ChatResponse getFlowChatResponse(Flux<ChatResponse> responseFlux) throws Exception {
-        Mono<ChatResponse> chatResponseMono = getMonoChatResponse(responseFlux);
-        var list = new ArrayList<ChatResponse>();
         var latch = new CountDownLatch(1);
+        final ChatResponse[] result = new ChatResponse[1];
+        Disposable disposable = null;
+
         try {
-            chatResponseMono.subscribe(mergedResponse -> {
-                list.add(mergedResponse);
+            Flux<ChatResponse> res = new MyMessageAggregator().aggregate(responseFlux,
+                    chatResponse -> {
+                log.info("111222");
+                result[0] = chatResponse;
                 latch.countDown();
             });
+            disposable = res.subscribe();
         } catch (Exception e) {
             log.error("getFlowChatResponse error", e);
+            latch.countDown();
+            throw e;
         } finally {
             latch.await();
+            if (disposable != null && !disposable.isDisposed()) {
+                disposable.dispose();
+            }
         }
-        return list.get(0);
+        return result[0];
     }
 }
