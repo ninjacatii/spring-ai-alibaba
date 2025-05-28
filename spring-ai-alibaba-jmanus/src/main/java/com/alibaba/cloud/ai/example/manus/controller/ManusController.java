@@ -22,8 +22,8 @@ import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionContext;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 import com.alibaba.cloud.ai.example.manus.recorder.entity.PlanExecutionRecord;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import groovy.util.logging.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +35,8 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/executor")
+@Slf4j
 public class ManusController {
-
-	private static final Logger logger = LoggerFactory.getLogger(ManusController.class);
-
 	@Autowired
 	@Lazy
 	private PlanningFactory planningFactory;
@@ -75,7 +73,7 @@ public class ManusController {
 				return planningFlow.executePlan(context);
 			}
 			catch (Exception e) {
-				logger.error("执行计划失败", e);
+				log.error("执行计划失败", e);
 				throw new RuntimeException("执行计划失败: " + e.getMessage(), e);
 			}
 		});

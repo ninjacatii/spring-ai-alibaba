@@ -23,18 +23,16 @@ import com.alibaba.cloud.ai.example.manus.planning.coordinator.PlanIdDispatcher;
 import com.alibaba.cloud.ai.example.manus.planning.coordinator.PlanningCoordinator;
 import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import groovy.util.logging.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 @Configuration
+@Slf4j
 public class QueryCommandRunner implements CommandLineRunner {
-
-	private static final Logger logger = LoggerFactory.getLogger(QueryCommandRunner.class);
-
 	@Autowired
 	@Lazy
 	private PlanningFactory planningFactory;
@@ -49,11 +47,11 @@ public class QueryCommandRunner implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		// 只有当启用了控制台查询模式时才执行
 		if (!manusProperties.getConsoleQuery()) {
-			logger.info("控制台交互模式未启用，跳过命令行查询");
+			log.info("控制台交互模式未启用，跳过命令行查询");
 			return;
 		}
 
-		logger.info("启动控制台交互模式，请输入查询...");
+		log.info("启动控制台交互模式，请输入查询...");
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
 			System.out.println("Enter your query (or type 'exit' to quit): ");
@@ -76,7 +74,7 @@ public class QueryCommandRunner implements CommandLineRunner {
 				System.out.println("Execution Context: " + executionContext.getResultSummary());
 			}
 			catch (Exception e) {
-				logger.error("执行查询时发生错误", e);
+				log.error("执行查询时发生错误", e);
 				System.out.println("Error: " + e.getMessage());
 			}
 		}

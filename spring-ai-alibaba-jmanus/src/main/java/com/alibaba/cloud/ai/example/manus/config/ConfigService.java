@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -34,12 +32,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.cloud.ai.example.manus.config.entity.ConfigEntity;
 import com.alibaba.cloud.ai.example.manus.config.repository.ConfigRepository;
 
+import groovy.util.logging.Slf4j;
 import jakarta.annotation.PostConstruct;
 
 @Service
+@Slf4j
 public class ConfigService {
-
-	private static final Logger log = LoggerFactory.getLogger(ConfigService.class);
 
 	@Autowired
 	private ConfigRepository configRepository;

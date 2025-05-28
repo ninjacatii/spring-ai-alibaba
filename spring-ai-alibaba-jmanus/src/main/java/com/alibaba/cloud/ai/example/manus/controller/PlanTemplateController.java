@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -43,15 +41,15 @@ import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionPlan;
 import com.alibaba.cloud.ai.example.manus.planning.service.PlanTemplateService;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 
+import groovy.util.logging.Slf4j;
+
 /**
  * 计划模板控制器，处理计划模板页面的API请求
  */
 @RestController
 @RequestMapping("/api/plan-template")
+@Slf4j
 public class PlanTemplateController {
-
-	private static final Logger logger = LoggerFactory.getLogger(PlanTemplateController.class);
-
 	@Autowired
 	@Lazy
 	private PlanningFactory planningFactory;
@@ -103,7 +101,7 @@ public class PlanTemplateController {
 		try {
 			// 立即执行创建计划的阶段，而不是异步
 			planningCoordinator.createPlan(context);
-			logger.info("计划生成成功: {}", planTemplateId);
+			log.info("计划生成成功: {}", planTemplateId);
 
 			// 从记录器中获取生成的计划
 			if (context.getPlan() == null) {
@@ -125,7 +123,7 @@ public class PlanTemplateController {
 			return ResponseEntity.ok(response);
 		}
 		catch (Exception e) {
-			logger.error("生成计划失败", e);
+			log.error("生成计划失败", e);
 			return ResponseEntity.internalServerError().body(Map.of("error", "计划生成失败: " + e.getMessage()));
 		}
 	}
@@ -160,7 +158,7 @@ public class PlanTemplateController {
 			return ResponseEntity.badRequest().body(Map.of("error", "计划模板ID不能为空"));
 		}
 
-		logger.info("执行计划模板，ID: {}, 参数: {}", planTemplateId, allParams);
+		log.info("执行计划模板，ID: {}, 参数: {}", planTemplateId, allParams);
 		String rawParam = allParams != null ? allParams.get("rawParam") : null;
 		// 如果有URL参数，使用带参数的执行方法
 		return executePlanByTemplateIdInternal(planTemplateId, rawParam);
@@ -205,7 +203,7 @@ public class PlanTemplateController {
 
 				// 设置URL参数到ExecutionPlan中
 				if (rawParam != null && !rawParam.isEmpty()) {
-					logger.info("设置执行参数到计划中: {}", rawParam);
+					log.info("设置执行参数到计划中: {}", rawParam);
 					plan.setExecutionParams(rawParam);
 				}
 
@@ -216,11 +214,11 @@ public class PlanTemplateController {
 				context.setUserRequest(template.getTitle());
 			}
 			catch (Exception e) {
-				logger.error("解析计划JSON或获取用户请求失败", e);
+				log.error("解析计划JSON或获取用户请求失败", e);
 				context.setUserRequest("执行计划: " + newPlanId + "\n来自模板: " + planTemplateId);
 
 				// 如果解析失败，记录错误但继续执行流程
-				logger.warn("将使用原始JSON继续执行", e);
+				log.warn("将使用原始JSON继续执行", e);
 			}
 
 			// 异步执行任务
@@ -228,10 +226,10 @@ public class PlanTemplateController {
 				try {
 					// 执行计划的执行和总结步骤，跳过创建计划
 					planningCoordinator.executeExistingPlan(context);
-					logger.info("计划执行成功: {}", newPlanId);
+					log.info("计划执行成功: {}", newPlanId);
 				}
 				catch (Exception e) {
-					logger.error("执行计划失败", e);
+					log.error("执行计划失败", e);
 				}
 			});
 
@@ -244,7 +242,7 @@ public class PlanTemplateController {
 			return ResponseEntity.ok(response);
 		}
 		catch (Exception e) {
-			logger.error("执行计划失败", e);
+			log.error("执行计划失败", e);
 			return ResponseEntity.internalServerError().body(Map.of("error", "执行计划失败: " + e.getMessage()));
 		}
 	}
@@ -269,7 +267,7 @@ public class PlanTemplateController {
 			planTemplateService.saveVersionToHistory(planId, planJson);
 		}
 
-		logger.info("已保存计划 {} 的新版本", planId);
+		log.info("已保存计划 {} 的新版本", planId);
 	}
 
 	/**
@@ -303,7 +301,7 @@ public class PlanTemplateController {
 				.ok(Map.of("status", "success", "message", "计划已保存", "planId", planId, "versionCount", versionCount));
 		}
 		catch (Exception e) {
-			logger.error("保存计划失败", e);
+			log.error("保存计划失败", e);
 			return ResponseEntity.internalServerError().body(Map.of("error", "保存计划失败: " + e.getMessage()));
 		}
 	}
@@ -375,7 +373,7 @@ public class PlanTemplateController {
 			return ResponseEntity.badRequest().body(Map.of("error", "版本索引必须是数字"));
 		}
 		catch (Exception e) {
-			logger.error("获取计划版本失败", e);
+			log.error("获取计划版本失败", e);
 			return ResponseEntity.internalServerError().body(Map.of("error", "获取计划版本失败: " + e.getMessage()));
 		}
 	}
@@ -410,7 +408,7 @@ public class PlanTemplateController {
 			return ResponseEntity.ok(response);
 		}
 		catch (Exception e) {
-			logger.error("获取计划模板列表失败", e);
+			log.error("获取计划模板列表失败", e);
 			return ResponseEntity.internalServerError().body(Map.of("error", "获取计划模板列表失败: " + e.getMessage()));
 		}
 	}
@@ -463,7 +461,7 @@ public class PlanTemplateController {
 		try {
 			// 立即执行创建计划的阶段，而不是异步
 			planningCoordinator.createPlan(context);
-			logger.info("计划模板更新成功: {}", planId);
+			log.info("计划模板更新成功: {}", planId);
 
 			// 从记录器中获取生成的计划
 			if (context.getPlan() == null) {
@@ -485,7 +483,7 @@ public class PlanTemplateController {
 			return ResponseEntity.ok(response);
 		}
 		catch (Exception e) {
-			logger.error("更新计划模板失败", e);
+			log.error("更新计划模板失败", e);
 			return ResponseEntity.internalServerError().body(Map.of("error", "计划模板更新失败: " + e.getMessage()));
 		}
 	}
@@ -514,16 +512,16 @@ public class PlanTemplateController {
 			boolean deleted = planTemplateService.deletePlanTemplate(planId);
 
 			if (deleted) {
-				logger.info("计划模板删除成功: {}", planId);
+				log.info("计划模板删除成功: {}", planId);
 				return ResponseEntity.ok(Map.of("status", "success", "message", "计划模板已删除", "planId", planId));
 			}
 			else {
-				logger.error("计划模板删除失败: {}", planId);
+				log.error("计划模板删除失败: {}", planId);
 				return ResponseEntity.internalServerError().body(Map.of("error", "计划模板删除失败"));
 			}
 		}
 		catch (Exception e) {
-			logger.error("删除计划模板失败", e);
+			log.error("删除计划模板失败", e);
 			return ResponseEntity.internalServerError().body(Map.of("error", "删除计划模板失败: " + e.getMessage()));
 		}
 	}

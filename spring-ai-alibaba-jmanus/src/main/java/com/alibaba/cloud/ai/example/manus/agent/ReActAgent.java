@@ -15,19 +15,17 @@
  */
 package com.alibaba.cloud.ai.example.manus.agent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.alibaba.cloud.ai.example.manus.config.ManusProperties;
 import com.alibaba.cloud.ai.example.manus.llm.LlmService;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 
+import groovy.util.logging.Slf4j;
+
 /**
  * ReAct（Reasoning + Acting）模式的智能体基类 实现了思考(Reasoning)和行动(Acting)交替执行的智能体模式
  */
+@Slf4j
 public abstract class ReActAgent extends BaseAgent {
-
-	private static final Logger logger = LoggerFactory.getLogger(ReActAgent.class);
-
 	/**
 	 * 构造函数
 	 * @param llmService LLM服务实例，用于处理自然语言交互
