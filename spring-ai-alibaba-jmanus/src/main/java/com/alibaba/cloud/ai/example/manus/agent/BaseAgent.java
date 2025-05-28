@@ -60,10 +60,8 @@ import java.util.*;
  * @see AgentState
  * @see LlmService
  */
+@Slf4j
 public abstract class BaseAgent {
-
-	private static final Logger log = LoggerFactory.getLogger(BaseAgent.class);
-
 	@Setter
     @Getter
     private String planId = null;
