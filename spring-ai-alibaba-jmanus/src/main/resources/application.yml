@@ -35,16 +35,18 @@ logging:
     name: ./logs/info.log
   level:
     root: INFO
-    okhttp3: DEBUG
+    okhttp3: INFO
     org:
       apache:
-        http: DEBUG
+        http: INFO
       springframework:
-        web: DEBUG
+        web: INFO
+    reactor.netty.http.client: INFO  # 输出HTTP请求的详细日志
+    org.springframework.web.reactive.function.client: INFO  # 可选，记录WebClient调用链路
 
 org:
   springframework:
     ai:
       chat:
         client:
-          advisor: DEBUG
+          advisor: INFO

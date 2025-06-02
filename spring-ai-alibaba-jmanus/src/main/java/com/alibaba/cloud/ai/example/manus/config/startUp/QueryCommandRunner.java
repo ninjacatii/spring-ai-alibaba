@@ -23,7 +23,7 @@ import com.alibaba.cloud.ai.example.manus.planning.coordinator.PlanIdDispatcher;
 import com.alibaba.cloud.ai.example.manus.planning.coordinator.PlanningCoordinator;
 import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionContext;
 
-import groovy.util.logging.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

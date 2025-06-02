@@ -15,6 +15,7 @@
  */
 package com.alibaba.cloud.ai.example.manus.planning.coordinator;
 
+import cn.hutool.core.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -68,7 +69,7 @@ public class PlanIdDispatcher {
 
 		// 无论是否为planTemplateId格式，都生成新的唯一planId
 		// 使用时间戳和随机数确保唯一性
-		String uniqueId = PLAN_ID_PREFIX + System.currentTimeMillis() + "-" + (int) (Math.random() * 1000);
+		String uniqueId = PLAN_ID_PREFIX + generateId() + "-" + (int) (Math.random() * 1000);
 
 		if (isPlanTemplateId(planTemplateId)) {
 			logger.debug("从planTemplateId [{}] 生成新的唯一planId [{}]", planTemplateId, uniqueId);
@@ -112,9 +113,13 @@ public class PlanIdDispatcher {
 	 * @return 新生成的planTemplateId
 	 */
 	public String generatePlanTemplateId() {
-		String planTemplateId = PLAN_TEMPLATE_ID_PREFIX + System.currentTimeMillis();
+		String planTemplateId = PLAN_TEMPLATE_ID_PREFIX + generateId();
 		logger.debug("生成新的planTemplateId: {}", planTemplateId);
 		return planTemplateId;
+	}
+
+	private String generateId() {
+		return DateUtil.format(DateUtil.date(), "yyyyMMddHHmmss");
 	}
 
 	/**
@@ -122,7 +127,7 @@ public class PlanIdDispatcher {
 	 * @return 新生成的planId
 	 */
 	public String generatePlanId() {
-		String planId = PLAN_ID_PREFIX + System.currentTimeMillis();
+		String planId = PLAN_ID_PREFIX + generateId();
 		logger.debug("生成新的planId: {}", planId);
 		return planId;
 	}

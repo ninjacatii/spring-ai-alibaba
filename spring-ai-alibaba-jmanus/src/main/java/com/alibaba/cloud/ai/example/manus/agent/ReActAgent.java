@@ -19,7 +19,7 @@ import com.alibaba.cloud.ai.example.manus.config.ManusProperties;
 import com.alibaba.cloud.ai.example.manus.llm.LlmService;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 
-import groovy.util.logging.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ReAct（Reasoning + Acting）模式的智能体基类 实现了思考(Reasoning)和行动(Acting)交替执行的智能体模式

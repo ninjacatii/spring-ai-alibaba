@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,6 @@ import com.alibaba.cloud.ai.example.manus.planning.model.vo.ExecutionPlan;
 import com.alibaba.cloud.ai.example.manus.planning.service.PlanTemplateService;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
 
-import groovy.util.logging.Slf4j;
 
 /**
  * 计划模板控制器，处理计划模板页面的API请求

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
@@ -29,7 +30,6 @@ import com.alibaba.cloud.ai.example.manus.config.ConfigService;
 import com.alibaba.cloud.ai.example.manus.config.entity.ConfigEntity;
 import com.alibaba.cloud.ai.example.manus.dynamic.agent.service.DynamicAgentScanner;
 
-import groovy.util.logging.Slf4j;
 
 @Component
 @Slf4j

@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.cloud.ai.example.manus.config.ManusProperties;
 
-import groovy.util.logging.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -32,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.cloud.ai.example.manus.config.entity.ConfigEntity;
 import com.alibaba.cloud.ai.example.manus.config.repository.ConfigRepository;
 
-import groovy.util.logging.Slf4j;
+
 import jakarta.annotation.PostConstruct;
 
 @Service

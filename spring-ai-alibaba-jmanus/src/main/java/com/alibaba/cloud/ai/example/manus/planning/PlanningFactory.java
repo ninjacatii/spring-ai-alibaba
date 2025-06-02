@@ -174,7 +174,7 @@ public class PlanningFactory {
 		// 添加所有工具定义
 		toolDefinitions.add(BrowserUseTool.getInstance(chromeDriverService));
 		toolDefinitions.add(new TerminateTool(planId));
-		String dir = CodeUtils.WORKING_DIR + File.separator + DateUtil.now();
+		String dir = CodeUtils.WORKING_DIR + File.separator + planId;
 		toolDefinitions.add(new Bash(dir));
 		toolDefinitions.add(new DocLoaderTool());
 		toolDefinitions.add(new TextFileOperator(dir, textFileService));
