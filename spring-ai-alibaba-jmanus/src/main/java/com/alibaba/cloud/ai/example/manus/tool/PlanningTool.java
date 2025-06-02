@@ -147,7 +147,7 @@ public class PlanningTool implements Function<String, ToolExecuteResult> {
 			return new ToolExecuteResult("Required parameters missing");
 		}
 
-		ExecutionPlan plan = new ExecutionPlan(planId, title);
+		var plan = new ExecutionPlan(planId, title);
 		// 使用新的createExecutionStep方法创建并添加步骤
 		int index = 0;
 		for (String step : steps) {

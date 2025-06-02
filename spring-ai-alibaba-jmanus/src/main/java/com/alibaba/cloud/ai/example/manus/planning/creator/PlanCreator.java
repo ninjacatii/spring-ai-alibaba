@@ -65,8 +65,9 @@ public class PlanCreator {
 			ChatResponse response = Utils.getChatResponse(llmService.getPlanningChatClient()
 				.prompt(prompt)
 				.toolCallbacks(List.of(planningTool.getFunctionToolCallback()))
-				.advisors(memoryAdvisor -> memoryAdvisor.param("chat_memory_conversation_id", planId)
-					.param("chat_memory_retrieve_size", 100))
+				.advisors(memoryAdvisor -> memoryAdvisor
+						.param("chat_memory_conversation_id", planId)
+						.param("chat_memory_retrieve_size", 100))
 				);
 			String outputText = response.getResult().getOutput().getText();
 			// 检查计划是否创建成功
@@ -76,8 +77,7 @@ public class PlanCreator {
 				currentPlan.setPlanningThinking(outputText);
 			}
 			context.setPlan(currentPlan);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error("Error creating plan for request: {}", context.getUserRequest(), e);
 			// 处理异常情况
 			throw new RuntimeException("Failed to create plan", e);

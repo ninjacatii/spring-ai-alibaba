@@ -131,19 +131,16 @@ public class PlanningFactory {
 	// }
 
 	public PlanningCoordinator createPlanningCoordinator(String planId) {
-
 		// Add all dynamic agents from the database
 		List<DynamicAgentEntity> agentEntities = dynamicAgentLoader.getAllAgents();
 
-		PlanningTool planningTool = new PlanningTool();
+		var planningTool = new PlanningTool();
 
-		PlanCreator planCreator = new PlanCreator(agentEntities, llmService, planningTool, recorder);
-		PlanExecutor planExecutor = new PlanExecutor(agentEntities, recorder, agentService);
-		PlanFinalizer planFinalizer = new PlanFinalizer(llmService, recorder);
+		var planCreator = new PlanCreator(agentEntities, llmService, planningTool, recorder);
+		var planExecutor = new PlanExecutor(agentEntities, recorder, agentService);
+		var planFinalizer = new PlanFinalizer(llmService, recorder);
 
-		PlanningCoordinator planningCoordinator = new PlanningCoordinator(planCreator, planExecutor, planFinalizer);
-
-		return planningCoordinator;
+        return new PlanningCoordinator(planCreator, planExecutor, planFinalizer);
 	}
 
 	public static class ToolCallBackContext {

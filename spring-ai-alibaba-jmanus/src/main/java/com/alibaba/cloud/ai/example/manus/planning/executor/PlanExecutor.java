@@ -62,8 +62,7 @@ public class PlanExecutor {
 
 	/**
 	 * 执行整个计划的所有步骤
-	 * @param plan 要执行的计划
-	 * @return 执行结果
+	 * @param context 上下文
 	 */
 	public void executeAllSteps(ExecutionContext context) {
 		recordPlanExecutionStart(context);
@@ -78,9 +77,8 @@ public class PlanExecutor {
 
 	/**
 	 * 执行单个步骤
-	 * @param executor 执行器
-	 * @param stepInfo 步骤信息
-	 * @return 步骤执行结果
+	 * @param step 步骤
+	 * @param context 上下文
 	 */
 	private void executeStep(ExecutionStep step, ExecutionContext context) {
 
@@ -111,15 +109,12 @@ public class PlanExecutor {
 			// Execute the step
 			step.setResult(stepResultStr);
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Error executing step: {}", e.getMessage(), e);
 			step.setResult("Execution failed: " + e.getMessage());
-		}
-		finally {
+		} finally {
 			recordStepEnd(step, context);
 		}
-
 	}
 
 	private String getStepFromStepReq(String stepRequirement) {
@@ -143,8 +138,7 @@ public class PlanExecutor {
 				return agentService.createDynamicBaseAgent(agent.getAgentName(), context.getPlan().getPlanId());
 			}
 		}
-		throw new IllegalArgumentException(
-				"No Agent Executor found for step type, check your agents list : " + stepType);
+		throw new IllegalArgumentException("No Agent Executor found for step type, check your agents list : " + stepType);
 	}
 
 	protected PlanExecutionRecorder getRecorder() {
@@ -185,13 +179,11 @@ public class PlanExecutor {
 	private void recordStepStart(ExecutionStep step, ExecutionContext context) {
 		// 更新 PlanExecutionRecord 中的当前步骤索引
 		PlanExecutionRecord record = getOrCreatePlanExecutionRecord(context);
-		if (record != null) {
-			int currentStepIndex = step.getStepIndex();
-			record.setCurrentStepIndex(currentStepIndex);
-			retrieveExecutionSteps(context, record);
-			getRecorder().recordPlanExecution(record);
-		}
-	}
+        int currentStepIndex = step.getStepIndex();
+        record.setCurrentStepIndex(currentStepIndex);
+        retrieveExecutionSteps(context, record);
+        getRecorder().recordPlanExecution(record);
+    }
 
 	/**
 	 * 记录步骤执行完成
@@ -201,13 +193,11 @@ public class PlanExecutor {
 	private void recordStepEnd(ExecutionStep step, ExecutionContext context) {
 		// 更新 PlanExecutionRecord 中的步骤状态
 		PlanExecutionRecord record = getOrCreatePlanExecutionRecord(context);
-		if (record != null) {
-			int currentStepIndex = step.getStepIndex();
-			record.setCurrentStepIndex(currentStepIndex);
-			// 重新获取所有步骤状态
-			retrieveExecutionSteps(context, record);
-			getRecorder().recordPlanExecution(record);
-		}
-	}
+        int currentStepIndex = step.getStepIndex();
+        record.setCurrentStepIndex(currentStepIndex);
+        // 重新获取所有步骤状态
+        retrieveExecutionSteps(context, record);
+        getRecorder().recordPlanExecution(record);
+    }
 
 }

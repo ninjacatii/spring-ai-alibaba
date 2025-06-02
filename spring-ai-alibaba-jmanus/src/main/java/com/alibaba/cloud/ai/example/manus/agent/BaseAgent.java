@@ -196,8 +196,7 @@ public abstract class BaseAgent {
 
 				if (isStuck()) {
 					handleStuckState(agentRecord);
-				}
-				else {
+				} else {
 					// 更新全局状态以保持一致性
 					log.info("Agent state: {}", stepResult.getState());
 					state = stepResult.getState();
@@ -224,8 +223,7 @@ public abstract class BaseAgent {
 			String status = agentRecord.isCompleted() ? "成功" : (agentRecord.isStuck() ? "执行卡住" : "未完成");
 			agentRecord.setResult(String.format("执行%s [耗时%d秒] [消耗步骤%d] ", status, executionTimeSeconds, currentStep));
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.error("Agent execution failed", e);
 			// 记录异常信息到agentRecord
 			agentRecord.setErrorMessage(e.getMessage());
@@ -234,8 +232,7 @@ public abstract class BaseAgent {
 			agentRecord.setResult(String.format("执行失败 [错误: %s]", e.getMessage()));
 			results.add("Execution failed: " + e.getMessage());
 			throw e; // 重新抛出异常，让上层调用者知道发生了错误
-		}
-		finally {
+		} finally {
 			state = AgentState.COMPLETED; // Reset state after execution
 
 			agentRecord.setStatus(state.toString());

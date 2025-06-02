@@ -57,7 +57,7 @@ public class TerminateTool implements ToolCallBiFunctionDef {
 			""";
 
 	public static OpenAiApi.FunctionTool getToolDefinition() {
-		OpenAiApi.FunctionTool.Function function = new OpenAiApi.FunctionTool.Function(description, name, PARAMETERS);
+		var function = new OpenAiApi.FunctionTool.Function(description, name, PARAMETERS);
 		return new OpenAiApi.FunctionTool(function);
 	}
 
