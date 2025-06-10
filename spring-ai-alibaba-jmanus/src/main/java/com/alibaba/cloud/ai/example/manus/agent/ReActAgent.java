@@ -39,9 +39,7 @@ public abstract class ReActAgent extends BaseAgent {
 
 	/**
 	 * 执行思考过程，判断是否需要采取行动
-	 *
 	 * 子类实现要求： 1. 分析当前状态和上下文 2. 进行逻辑推理，得出下一步行动的决策 3. 返回是否需要执行行动
-	 *
 	 * 示例实现： - 如果需要调用工具，返回true - 如果当前步骤已完成，返回false
 	 * @return true表示需要执行行动，false表示当前不需要行动
 	 */
@@ -49,9 +47,7 @@ public abstract class ReActAgent extends BaseAgent {
 
 	/**
 	 * 执行具体的行动
-	 *
 	 * 子类实现要求： 1. 基于think()的决策执行具体操作 2. 可以是工具调用、状态更新等具体行为 3. 返回执行结果的描述信息
-	 *
 	 * 示例实现： - ToolCallAgent：执行选定的工具调用 - BrowserAgent：执行浏览器操作
 	 * @return 行动执行的结果描述
 	 */
@@ -66,10 +62,8 @@ public abstract class ReActAgent extends BaseAgent {
 
 		boolean shouldAct = think();
 		if (!shouldAct) {
-			AgentExecResult result = new AgentExecResult("Thinking complete - no action needed",
-					AgentState.IN_PROGRESS);
-
-			return result;
+            return new AgentExecResult("Thinking complete - no action needed",
+                    AgentState.IN_PROGRESS);
 		}
 		return act();
 	}

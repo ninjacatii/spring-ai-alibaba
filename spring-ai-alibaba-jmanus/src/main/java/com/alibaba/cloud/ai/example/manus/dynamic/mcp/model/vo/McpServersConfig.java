@@ -17,6 +17,8 @@ package com.alibaba.cloud.ai.example.manus.dynamic.mcp.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,8 @@ import java.util.Map;
  * MCP服务器配置解析对象，用于解析形如： { "mcpServers": { "server-name": { "url":
  * "http://localhost:3000/sse", "env": { "API_KEY": "value" } } } } 的配置格式
  */
+@Setter
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class McpServersConfig {
 
@@ -35,15 +39,7 @@ public class McpServersConfig {
 		this.mcpServers = new HashMap<>();
 	}
 
-	public Map<String, McpServerConfig> getMcpServers() {
-		return mcpServers;
-	}
-
-	public void setMcpServers(Map<String, McpServerConfig> mcpServers) {
-		this.mcpServers = mcpServers;
-	}
-
-	/**
+    /**
 	 * 获取第一个服务器配置
 	 * @return 第一个服务器配置，如果没有则返回null
 	 */

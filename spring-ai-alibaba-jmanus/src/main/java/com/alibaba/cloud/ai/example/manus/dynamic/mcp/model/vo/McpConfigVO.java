@@ -17,6 +17,8 @@ package com.alibaba.cloud.ai.example.manus.dynamic.mcp.model.vo;
 
 import com.alibaba.cloud.ai.example.manus.dynamic.mcp.model.po.McpConfigEntity;
 import com.alibaba.cloud.ai.example.manus.dynamic.mcp.model.po.McpConfigType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +26,12 @@ import java.util.List;
 /**
  * VO对象，用于McpConfig的前端展示
  */
+@Setter
+@Getter
 public class McpConfigVO {
 
-	private Long id;
+    // Getters and Setters
+    private Long id;
 
 	private String mcpServerName;
 
@@ -58,48 +63,7 @@ public class McpConfigVO {
 		return vos;
 	}
 
-	// Getters and Setters
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getMcpServerName() {
-		return mcpServerName;
-	}
-
-	public void setMcpServerName(String mcpServerName) {
-		this.mcpServerName = mcpServerName;
-	}
-
-	public McpConfigType getConnectionType() {
-		return connectionType;
-	}
-
-	public void setConnectionType(McpConfigType connectionType) {
-		this.connectionType = connectionType;
-	}
-
-	public String getConnectionConfig() {
-		return connectionConfig;
-	}
-
-	public void setConnectionConfig(String connectionConfig) {
-		this.connectionConfig = connectionConfig;
-	}
-
-	public List<String> getToolNames() {
-		return toolNames;
-	}
-
-	public void setToolNames(List<String> toolNames) {
-		this.toolNames = toolNames;
-	}
-
-	@Override
+    @Override
 	public String toString() {
 		return "McpConfigVO{" + "id=" + id + ", mcpServerName='" + mcpServerName + '\'' + ", connectionType="
 				+ connectionType + ", connectionConfig='" + connectionConfig + '\'' + ", toolNames=" + toolNames + '}';

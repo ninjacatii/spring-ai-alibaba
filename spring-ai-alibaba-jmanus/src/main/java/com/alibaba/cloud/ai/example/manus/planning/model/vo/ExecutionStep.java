@@ -36,21 +36,18 @@ public class ExecutionStep {
 	}
 
 	public String getStepInStr() {
-		String agentState = null;
+		String agentState;
 		if (agent != null) {
 			agentState = agent.getState().toString();
-		}
-		else {
+		} else {
 			agentState = AgentState.NOT_STARTED.toString();
 		}
-		StringBuilder sb = new StringBuilder();
-		sb.append(stepIndex);
-		sb.append(". ");
-		sb.append("[").append(agentState).append("]");
-		sb.append(" ");
-		sb.append(stepRequirement);
 
-		return sb.toString();
+        return stepIndex +
+                ". " +
+                "[" + agentState + "]" +
+                " " +
+                stepRequirement;
 	}
 
 	/**

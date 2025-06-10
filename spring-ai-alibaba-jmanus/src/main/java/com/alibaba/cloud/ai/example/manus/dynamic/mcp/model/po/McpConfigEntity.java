@@ -23,12 +23,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 @Entity
 @Table(name = "mcp_config")
 public class McpConfigEntity {
 
-	@Id
+    // Getters and Setters
+    @Setter
+    @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -42,38 +47,17 @@ public class McpConfigEntity {
 	@Column(nullable = false, length = 4000)
 	private String connectionConfig;
 
-	// Getters and Setters
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getMcpServerName() {
-		return mcpServerName;
-	}
-
-	public McpConfigEntity setMcpServerName(String mcpServerName) {
+    public McpConfigEntity setMcpServerName(String mcpServerName) {
 		this.mcpServerName = mcpServerName;
 		return this;
 	}
 
-	public McpConfigType getConnectionType() {
-		return connectionType;
-	}
-
-	public McpConfigEntity setConnectionType(McpConfigType connectionType) {
+    public McpConfigEntity setConnectionType(McpConfigType connectionType) {
 		this.connectionType = connectionType;
 		return this;
 	}
 
-	public String getConnectionConfig() {
-		return connectionConfig;
-	}
-
-	public McpConfigEntity setConnectionConfig(String connectionConfig) {
+    public McpConfigEntity setConnectionConfig(String connectionConfig) {
 		this.connectionConfig = connectionConfig;
 		return this;
 	}

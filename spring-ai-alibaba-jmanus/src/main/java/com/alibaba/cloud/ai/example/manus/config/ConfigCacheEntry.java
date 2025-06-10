@@ -15,9 +15,12 @@
  */
 package com.alibaba.cloud.ai.example.manus.config;
 
+import lombok.Getter;
+
 public class ConfigCacheEntry<T> {
 
-	private T value;
+	@Getter
+    private T value;
 
 	private long lastUpdateTime;
 
@@ -28,11 +31,7 @@ public class ConfigCacheEntry<T> {
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 
-	public T getValue() {
-		return value;
-	}
-
-	public void setValue(T value) {
+    public void setValue(T value) {
 		this.value = value;
 		this.lastUpdateTime = System.currentTimeMillis();
 	}

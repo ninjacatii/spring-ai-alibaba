@@ -22,6 +22,7 @@ import com.alibaba.cloud.ai.example.manus.dynamic.mcp.service.McpService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,11 +35,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/mcp")
 public class McpController {
-
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(McpController.class);
 
 	@Autowired
 	private McpService mcpService;
@@ -69,7 +69,7 @@ public class McpController {
 
 			// 如果不包含mcpServers字段，则需要转换为完整格式
 			if (!jsonNode.has("mcpServers")) {
-				logger.info("Detected short format JSON, converting to full format");
+				log.info("Detected short format JSON, converting to full format");
 
 				// 检查是否是简单的键值对格式（不包含外层大括号）
 				if (configJson.trim().startsWith("\"") && configJson.contains(":")) {
@@ -77,20 +77,16 @@ public class McpController {
 					configJson = "{" + configJson + "}";
 				}
 
-				// 创建完整的配置格式
-				StringBuilder fullJsonBuilder = new StringBuilder();
-				fullJsonBuilder.append("{\n  \"mcpServers\": ");
-				fullJsonBuilder.append(configJson);
-				fullJsonBuilder.append("\n}");
-
-				// 更新requestVO中的configJson
-				configJson = fullJsonBuilder.toString();
+                // 更新requestVO中的configJson
+				configJson = "{\n  \"mcpServers\": " +
+                        configJson +
+                        "\n}";
 				requestVO.setConfigJson(configJson);
-				logger.info("Converted to full format: {}", configJson);
+				log.info("Converted to full format: {}", configJson);
 			}
 		}
 		catch (Exception e) {
-			logger.warn("Error checking JSON format, proceeding with original format", e);
+			log.warn("Error checking JSON format, proceeding with original format", e);
 		}
 
 		mcpService.addMcpServer(requestVO);

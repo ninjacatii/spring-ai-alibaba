@@ -16,8 +16,12 @@
 package com.alibaba.cloud.ai.example.manus.dynamic.mcp.model.vo;
 
 import io.modelcontextprotocol.client.McpAsyncClient;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.ai.mcp.AsyncMcpToolCallbackProvider;
 
+@Setter
+@Getter
 public class McpServiceEntity {
 
 	private McpAsyncClient mcpAsyncClient;
@@ -36,30 +40,6 @@ public class McpServiceEntity {
 			String serviceGroup) {
 		this.mcpAsyncClient = mcpAsyncClient;
 		this.asyncMcpToolCallbackProvider = asyncMcpToolCallbackProvider;
-		this.serviceGroup = serviceGroup;
-	}
-
-	public McpAsyncClient getMcpAsyncClient() {
-		return mcpAsyncClient;
-	}
-
-	public void setMcpAsyncClient(McpAsyncClient mcpAsyncClient) {
-		this.mcpAsyncClient = mcpAsyncClient;
-	}
-
-	public AsyncMcpToolCallbackProvider getAsyncMcpToolCallbackProvider() {
-		return asyncMcpToolCallbackProvider;
-	}
-
-	public void setAsyncMcpToolCallbackProvider(AsyncMcpToolCallbackProvider asyncMcpToolCallbackProvider) {
-		this.asyncMcpToolCallbackProvider = asyncMcpToolCallbackProvider;
-	}
-
-	public String getServiceGroup() {
-		return serviceGroup;
-	}
-
-	public void setServiceGroup(String serviceGroup) {
 		this.serviceGroup = serviceGroup;
 	}
 

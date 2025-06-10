@@ -15,9 +15,15 @@
  */
 package com.alibaba.cloud.ai.example.manus.dynamic.agent.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class Tool {
 
-	private String key;
+    // Getters and Setters
+    private String key;
 
 	private String name;
 
@@ -26,46 +32,5 @@ public class Tool {
 	private boolean enabled;
 
 	private String serviceGroup;
-
-	// Getters and Setters
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public String getServiceGroup() {
-		return serviceGroup;
-	}
-
-	public void setServiceGroup(String serviceGroup) {
-		this.serviceGroup = serviceGroup;
-	}
 
 }

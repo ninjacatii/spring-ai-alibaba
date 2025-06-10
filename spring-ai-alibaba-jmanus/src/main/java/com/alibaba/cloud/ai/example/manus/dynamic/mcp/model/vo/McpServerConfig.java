@@ -22,10 +22,14 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 内部服务器配置类
  */
+@Setter
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class McpServerConfig {
 
@@ -44,39 +48,7 @@ public class McpServerConfig {
 		this.env = new HashMap<>();
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getCommand() {
-		return command;
-	}
-
-	public void setCommand(String command) {
-		this.command = command;
-	}
-
-	public List<String> getArgs() {
-		return args;
-	}
-
-	public void setArgs(List<String> args) {
-		this.args = args;
-	}
-
-	public Map<String, String> getEnv() {
-		return env;
-	}
-
-	public void setEnv(Map<String, String> env) {
-		this.env = env;
-	}
-
-	/**
+    /**
 	 * 将ServerConfig转换为JSON字符串
 	 * @return 转换后的JSON字符串
 	 */

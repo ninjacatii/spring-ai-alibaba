@@ -15,9 +15,14 @@
  */
 package com.alibaba.cloud.ai.example.manus.dynamic.mcp.model.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * MCP配置请求值对象，用于接收前端传递的配置信息
  */
+@Setter
+@Getter
 public class McpConfigRequestVO {
 
 	/**
@@ -29,21 +34,5 @@ public class McpConfigRequestVO {
 	 * MCP服务器配置的JSON字符串
 	 */
 	private String configJson;
-
-	public String getConnectionType() {
-		return connectionType;
-	}
-
-	public void setConnectionType(String connectionType) {
-		this.connectionType = connectionType;
-	}
-
-	public String getConfigJson() {
-		return configJson;
-	}
-
-	public void setConfigJson(String configJson) {
-		this.configJson = configJson;
-	}
 
 }
