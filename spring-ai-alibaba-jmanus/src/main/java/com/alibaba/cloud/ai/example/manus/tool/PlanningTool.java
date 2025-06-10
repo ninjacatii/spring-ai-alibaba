@@ -158,39 +158,39 @@ public class PlanningTool implements Function<String, ToolExecuteResult> {
 		return new ToolExecuteResult("Plan created: " + planId + "\n" + plan.getPlanExecutionStateStringFormat(false));
 	}
 
-	// public ToolExecuteResult updatePlan(String planId, String title, List<String>
-	// steps) {
-	// if (planId == null) {
-	// log.info("更新计划时缺少planId");
-	// return new ToolExecuteResult("plan_id required");
-	// }
+	 public ToolExecuteResult updatePlan(String planId, String title, List<String> steps) {
+		 if (planId == null) {
+			 log.info("更新计划时缺少planId");
+			 return new ToolExecuteResult("plan_id required");
+		 }
 
-	// if (currentPlan == null || !currentPlan.getPlanId().equals(planId)) {
-	// return new ToolExecuteResult("Plan not found: " + planId);
-	// }
+		 if (currentPlan == null || !currentPlan.getPlanId().equals(planId)) {
+			return new ToolExecuteResult("Plan not found: " + planId);
+		 }
 
-	// if (title != null) {
-	// currentPlan.setTitle(title);
-	// }
+		 if (title != null) {
+		 	currentPlan.setTitle(title);
+		 }
 
-	// if (steps != null) {
-	// List<ExecutionStep> oldSteps = new ArrayList<>(currentPlan.getSteps());
-	// currentPlan.setSteps(new ArrayList<>());
-	// for (String step : steps) {
-	// currentPlan.addStep(createExecutionStep(step, currentPlan.getStepCount() + 1));
-	// }
-	// //TODO 以后这里要优化的，目前update不会替代原有的步骤的执行结果，这个本身有点问题，但目前阶段可以不管，因为目前只用到create ，其他都没有用。
-	// // // 保持原有步骤的状态和备注
-	// // for (int i = 0; i < Math.min(oldSteps.size(), steps.size()); i++) {
-	// // if (oldSteps.get(i).getStepRequirement().equals(steps.get(i))) {
-	// // currentPlan.getSteps().get(i).setStatus(oldSteps.get(i).getStatus());
-	// // currentPlan.getSteps().get(i).setResult();(oldSteps.get(i).getResult());
-	// // } else {
-	// // currentPlan.getSteps().get(i).setStatus(PlanStepStatus.NOT_STARTED);
-	// // currentPlan.getSteps().get(i).setNotes(null);
-	// // }
-	// // }
-	// }
+		 if (steps != null) {
+			 List<ExecutionStep> oldSteps = new ArrayList<>(currentPlan.getSteps());
+			 currentPlan.setSteps(new ArrayList<>());
+			 for (String step : steps) {
+				 currentPlan.addStep(createExecutionStep(step, currentPlan.getStepCount() + 1));
+			 }
+			 //TODO 以后这里要优化的，目前update不会替代原有的步骤的执行结果，这个本身有点问题，但目前阶段可以不管，因为目前只用到create ，其他都没有用。
+			 // // 保持原有步骤的状态和备注
+			 // for (int i = 0; i < Math.min(oldSteps.size(), steps.size()); i++) {
+			 // if (oldSteps.get(i).getStepRequirement().equals(steps.get(i))) {
+			 // currentPlan.getSteps().get(i).setStatus(oldSteps.get(i).getStatus());
+			 // currentPlan.getSteps().get(i).setResult();(oldSteps.get(i).getResult());
+			 // } else {
+			 // currentPlan.getSteps().get(i).setStatus(PlanStepStatus.NOT_STARTED);
+			 // currentPlan.getSteps().get(i).setNotes(null);
+			 // }
+		 }
+		 return null;
+	 }
 
 	// return new ToolExecuteResult("Plan updated: " + planId + "\n" +
 	// formatPlan(currentPlan));

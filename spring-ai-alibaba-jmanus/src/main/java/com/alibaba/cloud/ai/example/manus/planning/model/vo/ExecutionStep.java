@@ -17,50 +17,22 @@ package com.alibaba.cloud.ai.example.manus.planning.model.vo;
 
 import com.alibaba.cloud.ai.example.manus.agent.AgentState;
 import com.alibaba.cloud.ai.example.manus.agent.BaseAgent;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 单个步骤的执行结果
  */
+@Getter
+@Setter
 public class ExecutionStep {
-
-	private Integer stepIndex;
-
-	private String stepRequirement;
-
-	private String result;
-
+    private Integer stepIndex;
+    private String stepRequirement;
+    private String result;
 	private BaseAgent agent;
-
-	public Integer getStepIndex() {
-		return stepIndex;
-	}
-
-	public void setStepIndex(Integer stepIndex) {
-		this.stepIndex = stepIndex;
-	}
-
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
-	}
 
 	public AgentState getStatus() {
 		return agent == null ? AgentState.NOT_STARTED : agent.getState();
-	}
-
-	public void setAgent(BaseAgent agent) {
-		this.agent = agent;
-	}
-
-	public String getStepRequirement() {
-		return stepRequirement;
-	}
-
-	public void setStepRequirement(String stepRequirement) {
-		this.stepRequirement = stepRequirement;
 	}
 
 	public String getStepInStr() {
