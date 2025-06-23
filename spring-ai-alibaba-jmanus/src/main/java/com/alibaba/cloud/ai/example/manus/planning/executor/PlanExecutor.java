@@ -33,18 +33,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 负责执行计划的类
  */
+@Slf4j
 public class PlanExecutor {
 
 	private static final String EXECUTION_ENV_KEY_STRING = "current_step_env_data";
-
-	private static final Logger logger = LoggerFactory.getLogger(PlanExecutor.class);
-
 	protected final PlanExecutionRecorder recorder;
 
 	// 匹配字符串开头的方括号，支持中文和其他字符
@@ -85,7 +82,7 @@ public class PlanExecutor {
 		String stepType = getStepFromStepReq(step.getStepRequirement());
 		BaseAgent executor = getExecutorForStep(stepType, context);
 		if (executor == null) {
-			logger.error("No executor found for step type: {}", stepType);
+			log.error("No executor found for step type: {}", stepType);
 			step.setResult("No executor found for step type: " + stepType);
 			return;
 		}
@@ -110,7 +107,7 @@ public class PlanExecutor {
 			step.setResult(stepResultStr);
 
 		} catch (Exception e) {
-			logger.error("Error executing step: {}", e.getMessage(), e);
+			log.error("Error executing step: {}", e.getMessage(), e);
 			step.setResult("Execution failed: " + e.getMessage());
 		} finally {
 			recordStepEnd(step, context);
